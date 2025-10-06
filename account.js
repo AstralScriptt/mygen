@@ -1,4 +1,5 @@
-// account.js
+// account.js - Hard reset, initial account
 let accounts = [
-    // User accounts loaded from localStorage in app.js
+    { email: "skibidi@gmail.com", username: "skibidi", password: "1", createdAt: new Date().toISOString() }
 ];
+localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
