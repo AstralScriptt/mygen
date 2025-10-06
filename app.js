@@ -3,30 +3,33 @@ document.addEventListener('DOMContentLoaded', () => {
     const landingPage = document.getElementById('landingPage');
     const app = document.getElementById('app');
     const authModal = document.getElementById('authModal');
+    const accountModal = document.getElementById('accountModal');
     const regForm = document.getElementById('regForm');
     const loginForm = document.getElementById('loginForm');
     const modalTitle = document.getElementById('modalTitle');
     const switchToReg = document.getElementById('switchToReg');
     const switchToLogin = document.getElementById('switchToLogin');
-    const close = document.querySelector('.close');
+    const closeBtns = document.querySelectorAll('.close');
     const signInBtn = document.getElementById('signInBtn');
     const getStartedBtn = document.getElementById('getStartedBtn');
     const heroCta = document.getElementById('heroCta');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+    const logoutBtns = document.querySelectorAll('.logout-btn');
     const mobileToggle = document.getElementById('mobileToggle');
     const sidebar = document.getElementById('sidebar');
     const tabLinks = document.querySelectorAll('[data-tab]');
     const tabContents = document.querySelectorAll('.tab-content');
     const generateBtn = document.getElementById('generateBtn');
+    const stockList = document.getElementById('stockList');
+    const historyList = document.getElementById('historyList');
     const stockCount = document.getElementById('stockCount');
-    const genCount = document.getElementById('generatedCount');
-    const genList = document.querySelector('.gen-list');
+    const genCountEl = document.getElementById('genCount');
+    const generatedCount = document.getElementById('generatedCount');
+    const copyBtn = document.getElementById('copyBtn');
 
     let currentUser = localStorage.getItem('currentUser');
     let accounts = JSON.parse(localStorage.getItem('rawrgenAccounts')) || [];
     let generatedAlts = JSON.parse(localStorage.getItem('generatedAlts')) || [];
-    let currentStock = [...stock]; // From stock.js
+    let currentStock = JSON.parse(localStorage.getItem('sharedStock')) || [...stock]; // Shared stock
 
     // Init
     if (currentUser) {
@@ -35,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showLanding();
     }
     updateCounts();
+    renderHistory();
 
     // Landing Events
     signInBtn.addEventListener('click', () => openAuth('Log In'));
@@ -46,12 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
     loginForm.addEventListener('submit', loginUser);
     switchToReg.addEventListener('click', (e) => { e.preventDefault(); openAuth('Sign Up'); });
     switchToLogin.addEventListener('click', (e) => { e.preventDefault(); openAuth('Log In'); });
-    close.addEventListener('click', closeAuth);
-    document.querySelector('.modal-overlay').addEventListener('click', closeAuth);
+    closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
+    document.querySelectorAll('.modal-overlay').forEach(overlay => overlay.addEventListener('click', closeModal));
 
     // App Events
-    logoutBtn.addEventListener('click', logout);
-    logoutBtnMobile.addEventListener('click', logout);
+    logoutBtns.forEach(btn => btn.addEventListener('click', logout));
     mobileToggle.addEventListener('click', () => {
         sidebar.classList.toggle('open');
         mobileToggle.classList.toggle('active');
@@ -67,7 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-    generateBtn.addEventListener('click', generateAccount);
+    generateBtn.addEventListener('click', randomGenerate);
+    copyBtn.addEventListener('click', copyCredentials);
 
     // Functions
     function showLanding() {
@@ -89,9 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
             loginForm.style.display = 'block';
         }
         authModal.style.display = 'block';
+        authModal.querySelector('.modal-content').classList.add('show');
     }
-    function closeAuth() {
-        authModal.style.display = 'none';
+    function closeModal() {
+        document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+        document.querySelectorAll('.modal-content').forEach(content => content.classList.remove('show'));
     }
     function registerUser(e) {
         e.preventDefault();
@@ -100,13 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('regPassword').value;
         const confirmPassword = document.getElementById('regConfirmPassword').value;
         if (password !== confirmPassword || password.length < 8 || accounts.some(acc => acc.email === email || acc.username === username)) {
-            alert('Invalid registration.');
+            alert('Invalid registration details.');
             return;
         }
-        accounts.push({ email, username, password });
+        accounts.push({ email, username, password, createdAt: new Date().toISOString() });
         localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
-        alert('Account created!');
-        closeAuth();
+        alert('Account created successfully!');
+        closeModal();
     }
     function loginUser(e) {
         e.preventDefault();
@@ -116,11 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             currentUser = user.username;
             localStorage.setItem('currentUser', currentUser);
-            alert('Logged in!');
-            closeAuth();
+            alert('Logged in successfully!');
+            closeModal();
             showApp();
         } else {
-            alert('Invalid login.');
+            alert('Invalid login credentials.');
         }
     }
     function logout() {
@@ -135,41 +141,80 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(`${tab}Tab`).classList.add('active');
         if (tab === 'generate') {
             renderStock();
-            renderRecent();
+        }
+        if (tab === 'history') {
+            renderHistory();
         }
     }
     function updateCounts() {
         stockCount.textContent = currentStock.length;
-        genCount.textContent = generatedAlts.length;
+        genCountEl.textContent = generatedAlts.length;
+        generatedCount.textContent = generatedAlts.length;
     }
-    function generateAccount() {
+    function randomGenerate() {
         if (currentStock.length === 0) {
             alert('No stock available.');
             return;
         }
-        const alt = currentStock.shift();
-        generatedAlts.unshift(alt);
+        const alt = currentStock.splice(Math.floor(Math.random() * currentStock.length), 1)[0];
+        generatedAlts.unshift({ ...alt, generatedAt: new Date().toISOString() });
+        localStorage.setItem('sharedStock', JSON.stringify(currentStock));
         localStorage.setItem('generatedAlts', JSON.stringify(generatedAlts));
-        localStorage.setItem('stock', JSON.stringify(currentStock));
         updateCounts();
         renderStock();
-        renderRecent();
+        renderHistory();
         alert(`Generated: ${alt.username} / ${alt.password}`);
     }
     function renderStock() {
-        // Stock is handled in generate tab via recent? Wait, user wants stock list in generate.
-        // For now, assume gen-list shows stock for generation.
-        genList.innerHTML = currentStock.map(alt => `
-            <div class="gen-item">
-                <div class="gen-info">
-                    <p>${alt.username}: ${alt.password}</p>
-                </div>
-                <button onclick="generateAccount()">Generate</button>
+        stockList.innerHTML = currentStock.map(alt => `
+            <div class="stock-item" onclick="generateSpecific('${alt.username}')">
+                <span class="stock-username">${alt.username}</span>
+                <span class="stock-password">${alt.password}</span>
             </div>
-        `).join('');
+        `).join('') || '<p>No stock available.</p>';
     }
-    function renderRecent() {
-        // Recent is generatedAlts
-        // But in code above, gen-list is used for stock; adjust if needed.
+    function generateSpecific(username) {
+        const index = currentStock.findIndex(alt => alt.username === username);
+        if (index > -1) {
+            const alt = currentStock.splice(index, 1)[0];
+            generatedAlts.unshift({ ...alt, generatedAt: new Date().toISOString() });
+            localStorage.setItem('sharedStock', JSON.stringify(currentStock));
+            localStorage.setItem('generatedAlts', JSON.stringify(generatedAlts));
+            updateCounts();
+            renderStock();
+            renderHistory();
+            alert(`Generated: ${alt.username} / ${alt.password}`);
+        }
+    }
+    function renderHistory() {
+        historyList.innerHTML = generatedAlts.map(alt => `
+            <div class="history-item">
+                <img src="https://via.placeholder.com/50?text=R" alt="Avatar" class="history-avatar">
+                <div class="history-info">
+                    <p>${alt.username}</p>
+                    <small>${new Date(alt.generatedAt).toLocaleDateString()}</small>
+                </div>
+                <div class="history-actions">
+                    <button onclick="copyHistory('${alt.username}', '${alt.password}')">📋</button>
+                    <button onclick="viewDetails('${alt.username}', '${alt.password}')">👁️</button>
+                </div>
+            </div>
+        `).join('') || '<p>No generations yet.</p>';
+    }
+    function copyHistory(username, password) {
+        navigator.clipboard.writeText(`${username}:${password}`);
+        alert('Copied!');
+    }
+    function viewDetails(username, password) {
+        document.getElementById('detailUsername').textContent = username;
+        document.getElementById('detailPassword').textContent = password;
+        accountModal.style.display = 'block';
+        accountModal.querySelector('.modal-content').classList.add('show');
+    }
+    function copyCredentials() {
+        const username = document.getElementById('detailUsername').textContent;
+        const password = document.getElementById('detailPassword').textContent;
+        navigator.clipboard.writeText(`${username}:${password}`);
+        alert('Copied!');
     }
 });
