@@ -245,3 +245,97 @@ h1 {
         gap: 20px;
     }
 }
+/* Add to styles.css for signup page */
+.signup-main {
+    padding-top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.signup-container {
+    background-color: #111;
+    padding: 40px;
+    border-radius: 10px;
+    border: 1px solid #333;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.signup-container h1 {
+    margin-bottom: 10px;
+    font-size: 2em;
+}
+
+.signup-container p {
+    color: #888;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #fff;
+    font-size: 0.9em;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #333;
+    background-color: #000;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.input-group input::placeholder {
+    color: #888;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.checkbox-group label {
+    margin: 0;
+    cursor: pointer;
+}
+
+.checkbox-group a {
+    color: #00ff00;
+    text-decoration: none;
+}
+
+.cta-btn.full-width {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.login-link {
+    margin-top: 20px;
+    color: #888;
+}
+
+.login-link a {
+    color: #00ff00;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
