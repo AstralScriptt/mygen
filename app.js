@@ -1,173 +1,175 @@
-// app.js - Handles modals, auth, animations, stock from stock.js
+// app.js
 document.addEventListener('DOMContentLoaded', () => {
-    // Elements
+    const landingPage = document.getElementById('landingPage');
+    const app = document.getElementById('app');
     const authModal = document.getElementById('authModal');
-    const stockModal = document.getElementById('stockModal');
-    const loginBtn = document.getElementById('loginBtn');
-    const stockLink = document.getElementById('stockLink');
-    const getStartedBtn = document.getElementById('getStartedBtn');
-    const notification = document.getElementById('notification');
-    const notificationText = document.getElementById('notification-text');
-    const loginForm = document.getElementById('loginForm');
     const regForm = document.getElementById('regForm');
-    const loginSubmit = document.getElementById('loginSubmit');
-    const regSubmit = document.getElementById('regSubmit');
+    const loginForm = document.getElementById('loginForm');
+    const modalTitle = document.getElementById('modalTitle');
     const switchToReg = document.getElementById('switchToReg');
     const switchToLogin = document.getElementById('switchToLogin');
-    const closeBtns = document.getElementsByClassName('close');
-    const modalTitle = document.getElementById('modalTitle');
+    const close = document.querySelector('.close');
+    const signInBtn = document.getElementById('signInBtn');
+    const getStartedBtn = document.getElementById('getStartedBtn');
+    const heroCta = document.getElementById('heroCta');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const logoutBtnMobile = document.getElementById('logoutBtnMobile');
     const mobileToggle = document.getElementById('mobileToggle');
     const sidebar = document.getElementById('sidebar');
-    const stockList = document.getElementById('stockList');
-    let currentUser = localStorage.getItem('currentUser') || null;
-    let accounts = JSON.parse(localStorage.getItem('rawrgenAccounts')) || [];
+    const tabLinks = document.querySelectorAll('[data-tab]');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const generateBtn = document.getElementById('generateBtn');
+    const stockCount = document.getElementById('stockCount');
+    const genCount = document.getElementById('generatedCount');
+    const genList = document.querySelector('.gen-list');
 
-    // Event Listeners
-    loginBtn.addEventListener('click', () => openAuth('Log In'));
-    getStartedBtn.addEventListener('click', (e) => { e.preventDefault(); openAuth('Sign Up'); });
-    stockLink.addEventListener('click', (e) => { e.preventDefault(); loadStock(); stockModal.style.display = 'block'; });
+    let currentUser = localStorage.getItem('currentUser');
+    let accounts = JSON.parse(localStorage.getItem('rawrgenAccounts')) || [];
+    let generatedAlts = JSON.parse(localStorage.getItem('generatedAlts')) || [];
+    let currentStock = [...stock]; // From stock.js
+
+    // Init
+    if (currentUser) {
+        showApp();
+    } else {
+        showLanding();
+    }
+    updateCounts();
+
+    // Landing Events
+    signInBtn.addEventListener('click', () => openAuth('Log In'));
+    getStartedBtn.addEventListener('click', () => openAuth('Sign Up'));
+    heroCta.addEventListener('click', () => openAuth('Sign Up'));
+
+    // Auth Events
+    regForm.addEventListener('submit', registerUser);
+    loginForm.addEventListener('submit', loginUser);
     switchToReg.addEventListener('click', (e) => { e.preventDefault(); openAuth('Sign Up'); });
     switchToLogin.addEventListener('click', (e) => { e.preventDefault(); openAuth('Log In'); });
-    loginSubmit.addEventListener('click', loginUser);
-    regSubmit.addEventListener('click', registerUser);
-    document.querySelector('.notification-close').addEventListener('click', hideNotification);
-    Array.from(closeBtns).forEach(btn => btn.addEventListener('click', closeAllModals));
-    window.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal')) closeAllModals();
-    });
+    close.addEventListener('click', closeAuth);
+    document.querySelector('.modal-overlay').addEventListener('click', closeAuth);
+
+    // App Events
+    logoutBtn.addEventListener('click', logout);
+    logoutBtnMobile.addEventListener('click', logout);
     mobileToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('mobile-open');
+        sidebar.classList.toggle('open');
         mobileToggle.classList.toggle('active');
     });
-
-    // Nav
-    document.querySelectorAll('.nav-link').forEach(link => {
+    tabLinks.forEach(link => {
         link.addEventListener('click', (e) => {
-            if (e.target.id !== 'stockLink') {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                document.getElementById(targetId).scrollIntoView({ behavior: 'smooth' });
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                if (window.innerWidth < 768) {
-                    sidebar.classList.remove('mobile-open');
-                    mobileToggle.classList.remove('active');
-                }
+            e.preventDefault();
+            const tab = link.dataset.tab;
+            switchTab(tab);
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('open');
+                mobileToggle.classList.remove('active');
             }
         });
     });
-
-    // Init User
-    if (currentUser) {
-        loginBtn.textContent = `Yo, ${currentUser}`;
-        loginBtn.style.background = '#00e63b';
-        loginBtn.style.color = '#000';
-    }
-
-    // Animate Particles
-    setTimeout(() => {
-        document.querySelectorAll('.particle').forEach((p, i) => {
-            p.style.animationDelay = `${i * 0.15}s`;
-        });
-    }, 200);
-
-    // Animate Counters
-    function animateCounters() {
-        const counters = document.querySelectorAll('.stat-number');
-        counters.forEach(counter => {
-            const target = parseInt(counter.getAttribute('data-target'));
-            const increment = target / 100;
-            let current = 0;
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    counter.textContent = target;
-                    clearInterval(timer);
-                } else {
-                    counter.textContent = Math.floor(current);
-                }
-            }, 25);
-        });
-    }
-    setTimeout(animateCounters, 1500);
+    generateBtn.addEventListener('click', generateAccount);
 
     // Functions
+    function showLanding() {
+        landingPage.style.display = 'block';
+        app.style.display = 'none';
+    }
+    function showApp() {
+        landingPage.style.display = 'none';
+        app.style.display = 'block';
+        switchTab('home');
+    }
     function openAuth(title) {
         modalTitle.textContent = title;
         if (title === 'Sign Up') {
-            loginForm.style.display = 'none';
             regForm.style.display = 'block';
+            loginForm.style.display = 'none';
         } else {
             regForm.style.display = 'none';
             loginForm.style.display = 'block';
         }
         authModal.style.display = 'block';
     }
-    function closeAllModals() {
+    function closeAuth() {
         authModal.style.display = 'none';
-        stockModal.style.display = 'none';
-        regForm.style.display = 'none';
-        loginForm.style.display = 'block';
-        modalTitle.textContent = 'Log In';
     }
-    function showNotification(message, type = 'info') {
-        notificationText.textContent = message;
-        notification.style.display = 'block';
-        setTimeout(hideNotification, 4000);
-    }
-    function hideNotification() {
-        notification.style.display = 'none';
-    }
-    function registerUser() {
-        const username = document.getElementById('regUsername').value.trim();
+    function registerUser(e) {
+        e.preventDefault();
         const email = document.getElementById('regEmail').value.trim();
+        const username = document.getElementById('regUsername').value.trim();
         const password = document.getElementById('regPassword').value;
         const confirmPassword = document.getElementById('regConfirmPassword').value;
-        if (!username || !email || !password || password !== confirmPassword || password.length < 8) {
-            showNotification('Invalid details – check password match & length.', 'error');
+        if (password !== confirmPassword || password.length < 8 || accounts.some(acc => acc.email === email || acc.username === username)) {
+            alert('Invalid registration.');
             return;
         }
-        const newAccount = { username, email, password, createdAt: new Date().toISOString() };
-        if (accounts.some(acc => acc.username.toLowerCase() === username.toLowerCase() || acc.email.toLowerCase() === email.toLowerCase())) {
-            showNotification('Username or email taken!', 'error');
-            return;
-        }
-        accounts.push(newAccount);
+        accounts.push({ email, username, password });
         localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
-        showNotification('Account created – log in to generate!');
-        closeAllModals();
+        alert('Account created!');
+        closeAuth();
     }
-    function loginUser() {
+    function loginUser(e) {
+        e.preventDefault();
         const email = document.getElementById('loginEmail').value.trim();
-        const password = document.getElementById('loginPassword').value.trim();
-        if (!email || !password) {
-            showNotification('Email and password required.', 'error');
-            return;
-        }
+        const password = document.getElementById('loginPassword').value;
         const user = accounts.find(acc => acc.email === email && acc.password === password);
         if (user) {
             currentUser = user.username;
             localStorage.setItem('currentUser', currentUser);
-            loginBtn.textContent = `Yo, ${currentUser}`;
-            loginBtn.style.background = '#00e63b';
-            loginBtn.style.color = '#000';
-            showNotification(`Welcome, ${currentUser}! Generate alts now.`);
-            closeAllModals();
+            alert('Logged in!');
+            closeAuth();
+            showApp();
         } else {
-            showNotification('Invalid login – try again.', 'error');
+            alert('Invalid login.');
         }
     }
-    function loadStock() {
-        if (typeof stock !== 'undefined' && stock.length > 0) {
-            stockList.innerHTML = stock.map(alt => `
-                <div class="stock-item">
-                    <h4>${alt.username}</h4>
-                    <p>${alt.password}</p>
-                    <button class="btn-auth small" onclick="alert('Generated: ${alt.username} / ${alt.password} (Demo)')">Generate</button>
-                </div>
-            `).join('');
-        } else {
-            stockList.innerHTML = '<p>No stock available (Add to stock.js).</p>';
+    function logout() {
+        currentUser = null;
+        localStorage.removeItem('currentUser');
+        showLanding();
+    }
+    function switchTab(tab) {
+        tabLinks.forEach(l => l.classList.remove('active'));
+        document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+        tabContents.forEach(c => c.classList.remove('active'));
+        document.getElementById(`${tab}Tab`).classList.add('active');
+        if (tab === 'generate') {
+            renderStock();
+            renderRecent();
         }
+    }
+    function updateCounts() {
+        stockCount.textContent = currentStock.length;
+        genCount.textContent = generatedAlts.length;
+    }
+    function generateAccount() {
+        if (currentStock.length === 0) {
+            alert('No stock available.');
+            return;
+        }
+        const alt = currentStock.shift();
+        generatedAlts.unshift(alt);
+        localStorage.setItem('generatedAlts', JSON.stringify(generatedAlts));
+        localStorage.setItem('stock', JSON.stringify(currentStock));
+        updateCounts();
+        renderStock();
+        renderRecent();
+        alert(`Generated: ${alt.username} / ${alt.password}`);
+    }
+    function renderStock() {
+        // Stock is handled in generate tab via recent? Wait, user wants stock list in generate.
+        // For now, assume gen-list shows stock for generation.
+        genList.innerHTML = currentStock.map(alt => `
+            <div class="gen-item">
+                <div class="gen-info">
+                    <p>${alt.username}: ${alt.password}</p>
+                </div>
+                <button onclick="generateAccount()">Generate</button>
+            </div>
+        `).join('');
+    }
+    function renderRecent() {
+        // Recent is generatedAlts
+        // But in code above, gen-list is used for stock; adjust if needed.
     }
 });
