@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RawrGen - Premium Roblox Alts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <div class="logo">
             <span class="logo-triangle">△</span>
-            RawrGen
+            <span class="logo-text">RawrGen</span>
         </div>
         <nav>
             <button id="signInBtn" class="nav-btn">Sign In</button>
@@ -22,7 +23,7 @@
         <div class="hero">
             <div class="subtitle">
                 <span class="green-dot">•</span>
-                Alt Generation Service
+                <span class="subtitle-text">Alt Generation Service</span>
             </div>
             <h1>
                 <span class="premium">PREMIUM</span>
@@ -30,22 +31,24 @@
                 <span class="roblox">ROBLOX</span>
                 <span class="alts">ALTS</span>
             </h1>
-            <p>Generate high quality Roblox alts with our advanced automation, fast, reliable, and completely secure.</p>
-            <button class="cta-btn" onclick="window.location.href='signup.html'">Start Generating</button>
+            <p class="hero-description">Generate high quality Roblox alts with our advanced automation, fast, reliable, and completely secure.</p>
+            <button class="cta-btn" id="heroCta">Start Generating</button>
         </div>
 
         <div class="stats">
             <div class="stat">
-                <span class="stat-number">10837</span>
+                <span class="stat-number" data-target="10837">0</span>
                 <span class="stat-label">Alts Available</span>
             </div>
             <div class="stat">
-                <span class="stat-number">100%</span>
+                <span class="stat-number" data-target="100">0</span>
                 <span class="stat-label">Success Rate</span>
+                <span class="stat-suffix">%</span>
             </div>
             <div class="stat">
-                <span class="stat-number">24/7</span>
+                <span class="stat-number" data-target="24">0</span>
                 <span class="stat-label">Generation</span>
+                <span class="stat-suffix">/7</span>
             </div>
         </div>
     </main>
