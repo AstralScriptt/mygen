@@ -1,6 +1,3 @@
-// stock.js
-let stock = [
-    { username: "RawrAlt1", password: "pass123" },
-    { username: "RawrAlt2", password: "secure456" },
-    // Add more: { username: "Alt3", password: "pass789" },
-];
+// stock.js - Hard reset, empty stock
+let stock = [];
+localStorage.setItem('sharedStock', JSON.stringify(stock));
