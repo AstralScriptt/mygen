@@ -3,15 +3,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,  initial-scale=1.0">
     <title>Sign Up - RawrGen</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
         <div class="logo">
             <span class="logo-triangle">△</span>
-            RawrGen
+            <span class="logo-text">RawrGen</span>
         </div>
         <nav>
             <button class="nav-btn" onclick="window.location.href='index.html'">Back to Home</button>
@@ -36,7 +37,7 @@
                 
                 <div class="input-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" placeholder="Create a strong password" required>
+                    <input type="password" id="password" placeholder="Create a strong password (8+ chars)" required>
                 </div>
                 
                 <div class="input-group">
@@ -52,7 +53,7 @@
                 <button type="submit" class="cta-btn full-width">Sign Up & Start Generating</button>
             </form>
             
-            <p class="login-link">Already have an account? <a href="#" onclick="showSignIn()">Sign in here</a></p>
+            <p class="login-link">Already have an account? <a href="index.html#signInBtn" onclick="document.getElementById('signInBtn').click(); return false;">Sign in here</a></p>
         </div>
     </main>
 
