@@ -170,12 +170,12 @@
                     <div class="dashboard-stats">
                         <div class="stat-box">
                             <h3>Stock</h3>
-                            <p id="stockCount">28,665</p>
+                            <p id="stockCount">0</p>
                             <small>Available alts</small>
                         </div>
                         <div class="stat-box">
                             <h3>Generations</h3>
-                            <p id="genCount">2</p>
+                            <p id="genCount">0</p>
                             <small>Total created</small>
                         </div>
                     </div>
@@ -204,32 +204,19 @@
                         <div class="generator-form">
                             <h3>Account Generator</h3>
                             <p>Generate premium Roblox accounts instantly</p>
-                            <div class="options">
-                                <label class="radio-option">
-                                    <input type="radio" name="type" value="normal" checked>
-                                    <span class="radio-label">Normal</span>
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="type" value="premium">
-                                    <span class="radio-label">Premium</span>
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="type" value="ho">
-                                    <span class="radio-label">HO</span>
-                                </label>
-                            </div>
                             <div class="limits">
-                                <p>Accounts Generated: <span id="generatedCount">2</span></p>
-                                <p>Daily Limit: 2/12</p>
+                                <p>Accounts Generated: <span id="generatedCount">0</span></p>
+                                <p>Daily Limit: 0/12</p>
                             </div>
                             <button class="btn-auth full-width" id="generateBtn">Generate Account</button>
                         </div>
-                        <div class="stock-list">
-                            <h3>Available Stock</h3>
-                            <p>Select an account to generate</p>
-                            <div id="stockList" class="stock-grid">
+                        <div class="recent-gens">
+                            <h3>Generated Accounts</h3>
+                            <p>View your recent account generations</p>
+                            <div id="recentList" class="gen-list">
                                 <!-- Dynamically populated -->
                             </div>
+                            <a href="#" class="view-all" data-tab="history">View All History</a>
                         </div>
                     </div>
                 </div>
@@ -256,9 +243,12 @@
     </div>
 
     <!-- Notification -->
-    <div class="notification" id="notification" style="display: none;">
-        <p id="notification-text"></p>
-        <button class="notification-close">&times;</button>
+    <div class="notification-container">
+        <div id="notification" class="notification">
+            <span class="notification-icon">!</span>
+            <p id="notification-text"></p>
+            <button class="notification-close">&times;</button>
+        </div>
     </div>
 
     <script src="account.js"></script>
