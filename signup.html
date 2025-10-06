@@ -1,0 +1,62 @@
+<!-- signup.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - RawrGen</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span class="logo-triangle">△</span>
+            RawrGen
+        </div>
+        <nav>
+            <button class="nav-btn" onclick="window.location.href='index.html'">Back to Home</button>
+        </nav>
+    </header>
+
+    <main class="signup-main">
+        <div class="signup-container">
+            <h1>Create Your Account</h1>
+            <p>Join thousands of users generating premium Roblox alts securely.</p>
+            
+            <form id="signupForm">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Choose a unique username" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Create a strong password" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
+                </div>
+                
+                <div class="input-group checkbox-group">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+                
+                <button type="submit" class="cta-btn full-width">Sign Up & Start Generating</button>
+            </form>
+            
+            <p class="login-link">Already have an account? <a href="#" onclick="showSignIn()">Sign in here</a></p>
+        </div>
+    </main>
+
+    <script src="account.js"></script>
+    <script src="signup-script.js"></script>
+</body>
+</html>
