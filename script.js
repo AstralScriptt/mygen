@@ -7,30 +7,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.querySelector('.close');
     const signInForm = document.getElementById('signInForm');
 
-    signInBtn.addEventListener('click', function() {
+    function openPopup() {
         signInPopup.style.display = 'block';
         overlay.style.display = 'block';
-    });
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePopup() {
+        signInPopup.style.display = 'none';
+        overlay.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    signInBtn.addEventListener('click', openPopup);
 
     getStartedBtn.addEventListener('click', function() {
         window.location.href = 'signup.html';
     });
 
-    closeBtn.addEventListener('click', function() {
-        signInPopup.style.display = 'none';
-        overlay.style.display = 'none';
-    });
+    closeBtn.addEventListener('click', closePopup);
 
-    overlay.addEventListener('click', function() {
-        signInPopup.style.display = 'none';
-        overlay.style.display = 'none';
-    });
+    overlay.addEventListener('click', closePopup);
 
     signInForm.addEventListener('submit', function(e) {
         e.preventDefault();
         // Handle sign in logic here (e.g., check against localStorage or account.js)
         alert('Sign in successful! (Demo)');
-        signInPopup.style.display = 'none';
-        overlay.style.display = 'none';
+        closePopup();
     });
 });
