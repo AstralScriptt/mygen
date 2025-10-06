@@ -4,153 +4,252 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RawrGen - Premium Roblox Alts</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="stars"></div>
-    <button class="mobile-toggle" id="mobileToggle">
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-toggle" id="mobileToggle" style="display: none;">
         <span></span>
         <span></span>
         <span></span>
     </button>
-    <div class="container">
-        <aside class="sidebar" id="sidebar">
+
+    <!-- Landing Page (Unauthenticated) -->
+    <div id="landingPage" class="landing-container">
+        <header class="landing-header">
             <div class="logo">
-                <h1 class="logo-text">△ RawrGen</h1>
-                <p class="tagline">Premium Roblox Alt Generator</p>
+                <span class="logo-triangle">△</span>
+                RawrGen
             </div>
-            <ul class="nav-menu">
-                <li><a href="#hero" class="nav-link active">Home</a></li>
-                <li><a href="#features" class="nav-link">Features</a></li>
-                <li><a href="#" class="nav-link" id="stockLink">Stock</a></li>
-            </ul>
-            <button class="btn-nav" id="loginBtn">Account</button>
-            <a href="#" class="btn-discord">Get Alts Now</a>
-        </aside>
-        <main class="main">
-            <section id="hero" class="hero">
-                <div class="hero-bg"></div>
-                <div class="hero-content">
-                    <h1 class="hero-title">
-                        <span class="premium">PREMIUM</span>
-                        <span class="roblox">ROBLOX</span>
-                        <span class="alts">ALTS</span>
-                    </h1>
-                    <p class="hero-subtitle">Generate high quality Roblox alts with our advanced automation, fast, reliable, and completely secure.</p>
-                    <a href="#" class="btn-cta" id="getStartedBtn">Start Generating</a>
+            <nav class="landing-nav">
+                <button id="signInBtn" class="nav-btn">Sign In</button>
+                <button id="getStartedBtn" class="nav-btn primary">Get Started</button>
+            </nav>
+        </header>
+
+        <main class="landing-main">
+            <div class="hero">
+                <div class="subtitle">
+                    <span class="green-dot">•</span>
+                    Alt Generation Service
                 </div>
-                <div class="hero-particles">
-                    <div class="particle p1"></div>
-                    <div class="particle p2"></div>
-                    <div class="particle p3"></div>
-                    <div class="particle p4"></div>
-                    <div class="particle p5"></div>
-                    <div class="particle p6"></div>
-                    <div class="particle p7"></div>
-                    <div class="particle p8"></div>
-                    <div class="particle p9"></div>
-                    <div class="particle p10"></div>
-                    <div class="particle p11"></div>
-                    <div class="particle p12"></div>
-                    <div class="particle p13"></div>
-                    <div class="particle p14"></div>
-                    <div class="particle p15"></div>
-                    <div class="particle p16"></div>
-                    <div class="particle p17"></div>
-                    <div class="particle p18"></div>
-                    <div class="particle p19"></div>
-                    <div class="particle p20"></div>
-                </div>
-            </section>
-            <section id="features" class="features-teaser">
-                <div class="teaser-card instant">
-                    <h3>Instant Generation</h3>
-                    <p>Deploy alts in seconds with lightning-fast automation.</p>
-                </div>
-                <div class="teaser-card secure">
-                    <h3>100% Secure</h3>
-                    <p>Bank-level encryption ensures your alts stay undetectable.</p>
-                </div>
-                <div class="teaser-card high-quality">
-                    <h3>High Quality</h3>
-                    <p>Premium accounts ready for premium play – no bans, ever.</p>
-                </div>
-                <div class="teaser-card 24-7">
-                    <h3>24/7 Support</h3>
-                    <p>Round-the-clock generation and help when you need it.</p>
-                </div>
-            </section>
-            <section class="stats-section">
+                <h1>
+                    <span class="premium">PREMIUM</span>
+                    <br>
+                    <span class="roblox">ROBLOX</span>
+                    <span class="alts">ALTS</span>
+                </h1>
+                <p>Generate high quality Roblox alts with our advanced automation, fast, reliable, and completely secure.</p>
+                <button class="cta-btn" id="heroCta">Start Generating</button>
+            </div>
+
+            <div class="stats">
                 <div class="stat">
-                    <span class="stat-number" data-target="10837">0</span>
+                    <span class="stat-number">10837</span>
                     <span class="stat-label">Alts Available</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number" data-target="100">0</span>
-                    <span class="stat-suffix">%</span>
+                    <span class="stat-number">100%</span>
                     <span class="stat-label">Success Rate</span>
                 </div>
                 <div class="stat">
-                    <span class="stat-number" data-target="24">0</span>
-                    <span class="stat-suffix">/7</span>
+                    <span class="stat-number">24/7</span>
                     <span class="stat-label">Generation</span>
                 </div>
-            </section>
+            </div>
         </main>
     </div>
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <div class="notification-content">
-            <span class="notification-icon">!</span>
-            <p id="notification-text"></p>
-            <button class="notification-close">×</button>
-        </div>
-    </div>
+
     <!-- Auth Modal -->
     <div id="authModal" class="modal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
+            <span class="close">&times;</span>
             <div class="modal-header">
-                <h3 id="modalTitle">Log In</h3>
-                <span class="close">×</span>
+                <h3 id="modalTitle">Sign Up</h3>
             </div>
-            <form id="loginForm" class="auth-form">
-                <input type="email" id="loginEmail" placeholder="Email">
-                <input type="password" id="loginPassword" placeholder="Password">
-                <button type="button" class="btn-auth" id="loginSubmit">Log In</button>
-                <p class="auth-switch">No account? <a href="#" id="switchToReg">Sign up</a></p>
-            </form>
-            <form id="regForm" class="auth-form" style="display: none;">
-                <input type="text" id="regUsername" placeholder="Username">
-                <input type="email" id="regEmail" placeholder="Email">
-                <input type="password" id="regPassword" placeholder="Password">
-                <input type="password" id="regConfirmPassword" placeholder="Confirm Password">
+            <form id="regForm" class="auth-form">
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="text" id="regUsername" placeholder="Username" required>
+                <input type="password" id="regPassword" placeholder="Password" required>
+                <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
                 <div class="checkbox-group">
                     <input type="checkbox" id="terms" required>
-                    <label for="terms">I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a></label>
+                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
                 </div>
-                <button type="button" class="btn-auth" id="regSubmit">Sign Up</button>
-                <p class="auth-switch">Got one? <a href="#" id="switchToLogin">Log in</a></p>
+                <button type="submit" class="btn-auth full-width">Sign Up</button>
+                <div class="social-links">
+                    <button class="social-btn">Continue with Apple</button>
+                    <button class="social-btn">Continue with Facebook</button>
+                    <button class="social-btn">Continue with Google</button>
+                </div>
+                <p class="auth-switch">Already have an account? <a href="#" id="switchToLogin">Sign in</a></p>
+            </form>
+            <form id="loginForm" class="auth-form" style="display: none;">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button type="submit" class="btn-auth full-width">Sign In</button>
+                <p class="auth-switch">Don't have an account? <a href="#" id="switchToReg">Sign up</a></p>
             </form>
         </div>
     </div>
-    <!-- Stock Modal -->
-    <div id="stockModal" class="modal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3>Alt Stock</h3>
-                <span class="close">×</span>
+
+    <!-- Authenticated App -->
+    <div id="app" class="app-container" style="display: none;">
+        <!-- Desktop Nav -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-triangle">△</span>
+                RawrGen
             </div>
-            <div class="stock-content">
-                <p>Available premium Roblox alts ready for instant generation.</p>
-                <div id="stockList" class="stock-grid">
-                    <!-- Dynamically loaded from stock.js -->
+            <nav class="app-nav">
+                <a href="#" class="nav-link active" data-tab="home">Home</a>
+                <a href="#" class="nav-link" data-tab="generate">Generate</a>
+                <a href="#" class="nav-link" data-tab="history">History</a>
+                <a href="#" class="nav-link" data-tab="settings">Settings</a>
+                <button id="logoutBtn" class="nav-btn">Logout</button>
+            </nav>
+        </header>
+
+        <!-- Mobile Side Menu -->
+        <aside class="sidebar" id="sidebar">
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active" data-tab="home">Home</a></li>
+                <li><a href="#" class="nav-link" data-tab="generate">Generate</a></li>
+                <li><a href="#" class="nav-link" data-tab="history">History</a></li>
+                <li><a href="#" class="nav-link" data-tab="settings">Settings</a></li>
+                <li><button id="logoutBtnMobile" class="nav-btn full-width">Logout</button></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Home Tab (Dashboard) -->
+            <section id="homeTab" class="tab-content active">
+                <div class="dashboard">
+                    <h1>Dashboard</h1>
+                    <div class="dashboard-grid">
+                        <div class="chart-placeholder">
+                            <p>Generations Overview (Last 5 Days)</p>
+                            <div class="fake-chart">
+                                <div class="bar" style="height: 20px; width: 80px;"></div>
+                                <div class="bar" style="height: 40px; width: 80px;"></div>
+                                <div class="bar" style="height: 60px; width: 80px;"></div>
+                                <div class="bar" style="height: 80px; width: 80px;"></div>
+                                <div class="bar" style="height: 100px; width: 80px;"></div>
+                            </div>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-box">
+                                <h3>Stock</h3>
+                                <p id="stockCount">28,665</p>
+                                <small>Available alts</small>
+                            </div>
+                            <div class="stat-box">
+                                <h3>Generations</h3>
+                                <p id="genCount">2</p>
+                                <small>Total created</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="news-section">
+                        <h3>News</h3>
+                        <p>New Features • Flow Update Wave 2: Introducing Tokens, API Access, Referral Rewards</p>
+                        <p>2025-07-25</p>
+                        <a href="#">View all →</a>
+                    </div>
+                    <div class="quick-links">
+                        <a href="#" class="quick-btn">Discord Community</a>
+                        <a href="#" class="quick-btn">Contact</a>
+                        <a href="#" class="quick-btn">Partners</a>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </section>
+
+            <!-- Generate Tab -->
+            <section id="generateTab" class="tab-content">
+                <div class="generate">
+                    <h1>Generate</h1>
+                    <div class="generate-grid">
+                        <div class="generator-form">
+                            <h3>Account Generator</h3>
+                            <p>Generate premium Roblox accounts instantly</p>
+                            <div class="options">
+                                <label><input type="radio" name="type" value="normal" checked> Normal</label>
+                                <label><input type="radio" name="type" value="premium"> Premium</label>
+                                <label><input type="radio" name="type" value="ho"> HO</label>
+                            </div>
+                            <div class="features">
+                                <label><input type="checkbox"> Premium Access</label>
+                                <label><input type="checkbox"> High Quality</label>
+                                <label><input type="checkbox"> Legit Accounts</label>
+                                <label><input type="checkbox"> Instant Delivery</label>
+                            </div>
+                            <div class="limits">
+                                <p>Accounts Generated: <span id="generatedCount">2</span></p>
+                                <p>Daily Limit: 2/12</p>
+                            </div>
+                            <button class="btn-auth full-width" id="generateBtn">Generate Account</button>
+                            <button class="subscribe-btn">Subscribe for More Generations</button>
+                        </div>
+                        <div class="recent-gens">
+                            <h3>Recent Generations</h3>
+                            <p>View your recent account generations</p>
+                            <div class="gen-list">
+                                <div class="gen-item">
+                                    <img src="https://via.placeholder.com/40?text=R" alt="Avatar">
+                                    <div class="gen-info">
+                                        <p>rpobbya35</p>
+                                        <small>about 2 months ago</small>
+                                    </div>
+                                    <div class="gen-actions">
+                                        <button>Copy</button>
+                                        <button>Eye</button>
+                                    </div>
+                                </div>
+                                <div class="gen-item">
+                                    <img src="https://via.placeholder.com/40?text=R" alt="Avatar">
+                                    <div class="gen-info">
+                                        <p>hollandar007</p>
+                                        <small>about 2 months ago</small>
+                                    </div>
+                                    <div class="gen-actions">
+                                        <button>Copy</button>
+                                        <button>Eye</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="view-all">View All History</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Tab -->
+            <section id="historyTab" class="tab-content">
+                <div class="history">
+                    <h1>History</h1>
+                    <p>Your generation history will appear here.</p>
+                </div>
+            </section>
+
+            <!-- Settings Tab -->
+            <section id="settingsTab" class="tab-content">
+                <div class="settings">
+                    <h1>Settings</h1>
+                    <p>Settings will appear here.</p>
+                </div>
+            </section>
+        </main>
     </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification" style="display: none;">
+        <p id="notification-text"></p>
+        <button class="notification-close">&times;</button>
+    </div>
+
     <script src="stock.js"></script>
     <script src="app.js"></script>
 </body>
