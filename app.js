@@ -1,11 +1,6 @@
 // app.js
 document.addEventListener('DOMContentLoaded', () => {
-    // Hard reset
-    localStorage.removeItem('rawrgenAccounts');
-    localStorage.removeItem('generatedAlts');
-    localStorage.removeItem('sharedStock');
-    localStorage.removeItem('currentUser');
-
+    // Removed hard reset for persistence
     const landingPage = document.getElementById('landingPage');
     const app = document.getElementById('app');
     const authModal = document.getElementById('authModal');
@@ -34,27 +29,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const notification = document.getElementById('notification');
     const notificationText = document.getElementById('notification-text');
     const notificationClose = document.querySelector('.notification-close');
-
     let currentUser = null;
-    let accounts = [{ email: "skibidi@gmail.com", username: "skibidi", password: "1", createdAt: new Date().toISOString() }];
-    let generatedAlts = [];
-    let currentStock = [...stock]; // Global shared stock
-
-    // Save to local for persistence, but simulate global by resetting on load
+    let accounts = JSON.parse(localStorage.getItem('rawrgenAccounts')) || [{ email: "skibidi@gmail.com", username: "skibidi", password: "1", createdAt: new Date().toISOString() }];
+    let generatedAlts = JSON.parse(localStorage.getItem('generatedAlts')) || [];
+    let currentStock = JSON.parse(localStorage.getItem('sharedStock')) || [...stock]; // Assuming stock.js loads 'stock'
+    // Save to local for persistence
     localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
     localStorage.setItem('generatedAlts', JSON.stringify(generatedAlts));
     localStorage.setItem('sharedStock', JSON.stringify(currentStock));
-
     // Init
     showLanding();
     updateCounts();
     renderHistory();
-
     // Landing Events
     signInBtn.addEventListener('click', () => openAuth('Log In'));
     getStartedBtn.addEventListener('click', () => openAuth('Sign Up'));
     heroCta.addEventListener('click', () => openAuth('Sign Up'));
-
     // Auth Events
     regForm.addEventListener('submit', registerUser);
     loginForm.addEventListener('submit', loginUser);
@@ -62,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
     switchToLogin.addEventListener('click', (e) => { e.preventDefault(); openAuth('Log In'); });
     closeBtns.forEach(btn => btn.addEventListener('click', closeModal));
     document.querySelectorAll('.modal-overlay').forEach(overlay => overlay.addEventListener('click', closeModal));
-
     // App Events
     logoutBtns.forEach(btn => btn.addEventListener('click', logout));
     mobileToggle.addEventListener('click', () => {
@@ -83,7 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
     generateBtn.addEventListener('click', randomGenerate);
     copyBtn.addEventListener('click', copyCredentials);
     notificationClose.addEventListener('click', hideNotification);
-
     // Functions
     function showLanding() {
         landingPage.style.display = 'block';
@@ -113,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             modal.querySelector('.modal-content').classList.remove('show');
         }
     }
-    function registerUser(e) {
+    async function registerUser(e) {
         e.preventDefault();
         const email = document.getElementById('regEmail').value.trim();
         const username = document.getElementById('regUsername').value.trim();
@@ -123,16 +111,54 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification('Invalid registration details.', 'error');
             return;
         }
-        accounts.push({ email, username, password, createdAt: new Date().toISOString() });
-        localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
-        showNotification('Account created successfully!');
-        closeModal();
+        // For global sync, call API if backend is set up
+        try {
+            const response = await fetch('/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, username, password })
+            });
+            const data = await response.json();
+            if (data.success) {
+                accounts.push({ email, username, password, createdAt: new Date().toISOString() });
+                localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
+                showNotification('Account created successfully!');
+                closeModal();
+            } else {
+                showNotification(data.error || 'Registration failed.', 'error');
+            }
+        } catch (err) {
+            // Fallback to local if API fails
+            accounts.push({ email, username, password, createdAt: new Date().toISOString() });
+            localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
+            showNotification('Account created successfully (local mode)!');
+            closeModal();
+        }
     }
-    function loginUser(e) {
+    async function loginUser(e) {
         e.preventDefault();
         const email = document.getElementById('loginEmail').value.trim();
         const password = document.getElementById('loginPassword').value;
-        const user = accounts.find(acc => acc.email === email && acc.password === password);
+        let user = accounts.find(acc => acc.email === email && acc.password === password);
+        if (!user) {
+            // Try API for global
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    user = { username: data.user.username, email: data.user.email };
+                    // Sync to local
+                    accounts.push({ ...user, password, createdAt: new Date().toISOString() });
+                    localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
+                }
+            } catch (err) {
+                // Fallback to local
+            }
+        }
         if (user) {
             currentUser = user.username;
             localStorage.setItem('currentUser', currentUser);
@@ -240,4 +266,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function hideNotification() {
         notification.style.display = 'none';
     }
+    // Global functions for onclick
+    window.copyGen = copyGen;
+    window.copyHistory = copyHistory;
+    window.viewDetails = viewDetails;
 });
