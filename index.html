@@ -68,30 +68,68 @@
             <span class="close">&times;</span>
             <div class="modal-header">
                 <h3 id="modalTitle">Sign Up</h3>
+                <div class="modal-divider"></div>
             </div>
             <form id="regForm" class="auth-form">
-                <input type="email" id="regEmail" placeholder="Email" required>
-                <input type="text" id="regUsername" placeholder="Username" required>
-                <input type="password" id="regPassword" placeholder="Password" required>
-                <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+                <div class="input-group">
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="regUsername" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
+                </div>
                 <div class="checkbox-group">
                     <input type="checkbox" id="terms" required>
                     <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
                 </div>
                 <button type="submit" class="btn-auth full-width">Sign Up</button>
-                <div class="social-links">
-                    <button class="social-btn">Continue with Apple</button>
-                    <button class="social-btn">Continue with Facebook</button>
-                    <button class="social-btn">Continue with Google</button>
-                </div>
                 <p class="auth-switch">Already have an account? <a href="#" id="switchToLogin">Sign in</a></p>
             </form>
             <form id="loginForm" class="auth-form" style="display: none;">
-                <input type="email" id="loginEmail" placeholder="Email" required>
-                <input type="password" id="loginPassword" placeholder="Password" required>
+                <div class="input-group">
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                </div>
                 <button type="submit" class="btn-auth full-width">Sign In</button>
                 <p class="auth-switch">Don't have an account? <a href="#" id="switchToReg">Sign up</a></p>
             </form>
+        </div>
+    </div>
+
+    <!-- Account Details Modal -->
+    <div id="accountModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content account-details">
+            <span class="close">&times;</span>
+            <div class="modal-header">
+                <h3>Account Details</h3>
+            </div>
+            <div class="account-info">
+                <img src="https://via.placeholder.com/80?text=R" alt="Avatar" class="account-avatar">
+                <div class="account-data">
+                    <div class="data-row">
+                        <label>Username</label>
+                        <p id="detailUsername"></p>
+                    </div>
+                    <div class="data-row">
+                        <label>Password</label>
+                        <p id="detailPassword"></p>
+                    </div>
+                </div>
+                <div class="warning">
+                    <p>WARNING - DO NOT SHARE THIS - Sharing will result in account termination.</p>
+                </div>
+                <div class="data-actions">
+                    <button class="btn-copy" id="copyBtn">Copy Credentials</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -108,7 +146,7 @@
                 <a href="#" class="nav-link" data-tab="generate">Generate</a>
                 <a href="#" class="nav-link" data-tab="history">History</a>
                 <a href="#" class="nav-link" data-tab="settings">Settings</a>
-                <button id="logoutBtn" class="nav-btn">Logout</button>
+                <button id="logoutBtn" class="nav-btn logout-btn">Logout</button>
             </nav>
         </header>
 
@@ -119,7 +157,7 @@
                 <li><a href="#" class="nav-link" data-tab="generate">Generate</a></li>
                 <li><a href="#" class="nav-link" data-tab="history">History</a></li>
                 <li><a href="#" class="nav-link" data-tab="settings">Settings</a></li>
-                <li><button id="logoutBtnMobile" class="nav-btn full-width">Logout</button></li>
+                <li><button id="logoutBtnMobile" class="nav-btn full-width logout-btn">Logout</button></li>
             </ul>
         </aside>
 
@@ -129,35 +167,26 @@
             <section id="homeTab" class="tab-content active">
                 <div class="dashboard">
                     <h1>Dashboard</h1>
-                    <div class="dashboard-grid">
-                        <div class="chart-placeholder">
-                            <p>Generations Overview (Last 5 Days)</p>
-                            <div class="fake-chart">
-                                <div class="bar" style="height: 20px; width: 80px;"></div>
-                                <div class="bar" style="height: 40px; width: 80px;"></div>
-                                <div class="bar" style="height: 60px; width: 80px;"></div>
-                                <div class="bar" style="height: 80px; width: 80px;"></div>
-                                <div class="bar" style="height: 100px; width: 80px;"></div>
-                            </div>
+                    <div class="dashboard-stats">
+                        <div class="stat-box">
+                            <h3>Stock</h3>
+                            <p id="stockCount">28,665</p>
+                            <small>Available alts</small>
                         </div>
-                        <div class="stats-grid">
-                            <div class="stat-box">
-                                <h3>Stock</h3>
-                                <p id="stockCount">28,665</p>
-                                <small>Available alts</small>
-                            </div>
-                            <div class="stat-box">
-                                <h3>Generations</h3>
-                                <p id="genCount">2</p>
-                                <small>Total created</small>
-                            </div>
+                        <div class="stat-box">
+                            <h3>Generations</h3>
+                            <p id="genCount">2</p>
+                            <small>Total created</small>
                         </div>
                     </div>
                     <div class="news-section">
                         <h3>News</h3>
-                        <p>New Features • Flow Update Wave 2: Introducing Tokens, API Access, Referral Rewards</p>
-                        <p>2025-07-25</p>
-                        <a href="#">View all →</a>
+                        <div class="news-item">
+                            <span class="news-badge">New Features</span>
+                            <p>Flow Update Wave 2: Introducing Tokens, API Access, Referral Rewards</p>
+                            <small>2025-07-25</small>
+                        </div>
+                        <a href="#" class="view-all-news">View all →</a>
                     </div>
                     <div class="quick-links">
                         <a href="#" class="quick-btn">Discord Community</a>
@@ -176,51 +205,31 @@
                             <h3>Account Generator</h3>
                             <p>Generate premium Roblox accounts instantly</p>
                             <div class="options">
-                                <label><input type="radio" name="type" value="normal" checked> Normal</label>
-                                <label><input type="radio" name="type" value="premium"> Premium</label>
-                                <label><input type="radio" name="type" value="ho"> HO</label>
-                            </div>
-                            <div class="features">
-                                <label><input type="checkbox"> Premium Access</label>
-                                <label><input type="checkbox"> High Quality</label>
-                                <label><input type="checkbox"> Legit Accounts</label>
-                                <label><input type="checkbox"> Instant Delivery</label>
+                                <label class="radio-option">
+                                    <input type="radio" name="type" value="normal" checked>
+                                    <span class="radio-label">Normal</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="type" value="premium">
+                                    <span class="radio-label">Premium</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="type" value="ho">
+                                    <span class="radio-label">HO</span>
+                                </label>
                             </div>
                             <div class="limits">
                                 <p>Accounts Generated: <span id="generatedCount">2</span></p>
                                 <p>Daily Limit: 2/12</p>
                             </div>
                             <button class="btn-auth full-width" id="generateBtn">Generate Account</button>
-                            <button class="subscribe-btn">Subscribe for More Generations</button>
                         </div>
-                        <div class="recent-gens">
-                            <h3>Recent Generations</h3>
-                            <p>View your recent account generations</p>
-                            <div class="gen-list">
-                                <div class="gen-item">
-                                    <img src="https://via.placeholder.com/40?text=R" alt="Avatar">
-                                    <div class="gen-info">
-                                        <p>rpobbya35</p>
-                                        <small>about 2 months ago</small>
-                                    </div>
-                                    <div class="gen-actions">
-                                        <button>Copy</button>
-                                        <button>Eye</button>
-                                    </div>
-                                </div>
-                                <div class="gen-item">
-                                    <img src="https://via.placeholder.com/40?text=R" alt="Avatar">
-                                    <div class="gen-info">
-                                        <p>hollandar007</p>
-                                        <small>about 2 months ago</small>
-                                    </div>
-                                    <div class="gen-actions">
-                                        <button>Copy</button>
-                                        <button>Eye</button>
-                                    </div>
-                                </div>
+                        <div class="stock-list">
+                            <h3>Available Stock</h3>
+                            <p>Select an account to generate</p>
+                            <div id="stockList" class="stock-grid">
+                                <!-- Dynamically populated -->
                             </div>
-                            <a href="#" class="view-all">View All History</a>
                         </div>
                     </div>
                 </div>
@@ -230,7 +239,9 @@
             <section id="historyTab" class="tab-content">
                 <div class="history">
                     <h1>History</h1>
-                    <p>Your generation history will appear here.</p>
+                    <div id="historyList" class="history-grid">
+                        <!-- Dynamically populated -->
+                    </div>
                 </div>
             </section>
 
@@ -238,7 +249,7 @@
             <section id="settingsTab" class="tab-content">
                 <div class="settings">
                     <h1>Settings</h1>
-                    <p>Settings will appear here.</p>
+                    <p>Settings options will appear here.</p>
                 </div>
             </section>
         </main>
@@ -250,6 +261,7 @@
         <button class="notification-close">&times;</button>
     </div>
 
+    <script src="account.js"></script>
     <script src="stock.js"></script>
     <script src="app.js"></script>
 </body>
