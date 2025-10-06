@@ -1,5 +1,11 @@
 // app.js
 document.addEventListener('DOMContentLoaded', () => {
+    // Hard reset
+    localStorage.removeItem('rawrgenAccounts');
+    localStorage.removeItem('generatedAlts');
+    localStorage.removeItem('sharedStock');
+    localStorage.removeItem('currentUser');
+
     const landingPage = document.getElementById('landingPage');
     const app = document.getElementById('app');
     const authModal = document.getElementById('authModal');
@@ -19,24 +25,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabLinks = document.querySelectorAll('[data-tab]');
     const tabContents = document.querySelectorAll('.tab-content');
     const generateBtn = document.getElementById('generateBtn');
-    const stockList = document.getElementById('stockList');
+    const recentList = document.getElementById('recentList');
     const historyList = document.getElementById('historyList');
     const stockCount = document.getElementById('stockCount');
     const genCountEl = document.getElementById('genCount');
     const generatedCount = document.getElementById('generatedCount');
     const copyBtn = document.getElementById('copyBtn');
+    const notification = document.getElementById('notification');
+    const notificationText = document.getElementById('notification-text');
+    const notificationClose = document.querySelector('.notification-close');
 
-    let currentUser = localStorage.getItem('currentUser');
-    let accounts = JSON.parse(localStorage.getItem('rawrgenAccounts')) || [];
-    let generatedAlts = JSON.parse(localStorage.getItem('generatedAlts')) || [];
-    let currentStock = JSON.parse(localStorage.getItem('sharedStock')) || [...stock]; // Shared stock
+    let currentUser = null;
+    let accounts = [{ email: "skibidi@gmail.com", username: "skibidi", password: "1", createdAt: new Date().toISOString() }];
+    let generatedAlts = [];
+    let currentStock = [...stock]; // Global shared stock
+
+    // Save to local for persistence, but simulate global by resetting on load
+    localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
+    localStorage.setItem('generatedAlts', JSON.stringify(generatedAlts));
+    localStorage.setItem('sharedStock', JSON.stringify(currentStock));
 
     // Init
-    if (currentUser) {
-        showApp();
-    } else {
-        showLanding();
-    }
+    showLanding();
     updateCounts();
     renderHistory();
 
@@ -72,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     generateBtn.addEventListener('click', randomGenerate);
     copyBtn.addEventListener('click', copyCredentials);
+    notificationClose.addEventListener('click', hideNotification);
 
     // Functions
     function showLanding() {
@@ -95,9 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
         authModal.style.display = 'block';
         authModal.querySelector('.modal-content').classList.add('show');
     }
-    function closeModal() {
-        document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
-        document.querySelectorAll('.modal-content').forEach(content => content.classList.remove('show'));
+    function closeModal(modalId = null) {
+        const modal = modalId ? document.getElementById(modalId) : document.querySelector('.modal[style*="block"]');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.querySelector('.modal-content').classList.remove('show');
+        }
     }
     function registerUser(e) {
         e.preventDefault();
@@ -106,12 +120,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('regPassword').value;
         const confirmPassword = document.getElementById('regConfirmPassword').value;
         if (password !== confirmPassword || password.length < 8 || accounts.some(acc => acc.email === email || acc.username === username)) {
-            alert('Invalid registration details.');
+            showNotification('Invalid registration details.', 'error');
             return;
         }
         accounts.push({ email, username, password, createdAt: new Date().toISOString() });
         localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
-        alert('Account created successfully!');
+        showNotification('Account created successfully!');
         closeModal();
     }
     function loginUser(e) {
@@ -122,16 +136,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (user) {
             currentUser = user.username;
             localStorage.setItem('currentUser', currentUser);
-            alert('Logged in successfully!');
+            showNotification('Logged in successfully!');
             closeModal();
             showApp();
         } else {
-            alert('Invalid login credentials.');
+            showNotification('Invalid login credentials.', 'error');
         }
     }
     function logout() {
         currentUser = null;
         localStorage.removeItem('currentUser');
+        showNotification('Logged out.');
         showLanding();
     }
     function switchTab(tab) {
@@ -140,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tabContents.forEach(c => c.classList.remove('active'));
         document.getElementById(`${tab}Tab`).classList.add('active');
         if (tab === 'generate') {
-            renderStock();
+            renderRecent();
         }
         if (tab === 'history') {
             renderHistory();
@@ -153,38 +168,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function randomGenerate() {
         if (currentStock.length === 0) {
-            alert('No stock available.');
+            showNotification('No stock available.', 'error');
             return;
         }
-        const alt = currentStock.splice(Math.floor(Math.random() * currentStock.length), 1)[0];
+        const index = Math.floor(Math.random() * currentStock.length);
+        const alt = currentStock.splice(index, 1)[0];
         generatedAlts.unshift({ ...alt, generatedAt: new Date().toISOString() });
         localStorage.setItem('sharedStock', JSON.stringify(currentStock));
         localStorage.setItem('generatedAlts', JSON.stringify(generatedAlts));
         updateCounts();
-        renderStock();
+        renderRecent();
         renderHistory();
-        alert(`Generated: ${alt.username} / ${alt.password}`);
+        showNotification(`Generated: ${alt.username}`);
     }
-    function renderStock() {
-        stockList.innerHTML = currentStock.map(alt => `
-            <div class="stock-item" onclick="generateSpecific('${alt.username}')">
-                <span class="stock-username">${alt.username}</span>
-                <span class="stock-password">${alt.password}</span>
+    function renderRecent() {
+        recentList.innerHTML = generatedAlts.slice(0, 5).map(alt => `
+            <div class="gen-item">
+                <img src="https://via.placeholder.com/40?text=R" alt="Avatar">
+                <div class="gen-info">
+                    <p>${alt.username}</p>
+                    <small>${new Date(alt.generatedAt).toLocaleDateString()}</small>
+                </div>
+                <div class="gen-actions">
+                    <button onclick="copyGen('${alt.username}', '${alt.password}')">📋</button>
+                    <button onclick="viewDetails('${alt.username}', '${alt.password}')">👁️</button>
+                </div>
             </div>
-        `).join('') || '<p>No stock available.</p>';
-    }
-    function generateSpecific(username) {
-        const index = currentStock.findIndex(alt => alt.username === username);
-        if (index > -1) {
-            const alt = currentStock.splice(index, 1)[0];
-            generatedAlts.unshift({ ...alt, generatedAt: new Date().toISOString() });
-            localStorage.setItem('sharedStock', JSON.stringify(currentStock));
-            localStorage.setItem('generatedAlts', JSON.stringify(generatedAlts));
-            updateCounts();
-            renderStock();
-            renderHistory();
-            alert(`Generated: ${alt.username} / ${alt.password}`);
-        }
+        `).join('') || '<p>No generations yet.</p>';
     }
     function renderHistory() {
         historyList.innerHTML = generatedAlts.map(alt => `
@@ -201,9 +211,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `).join('') || '<p>No generations yet.</p>';
     }
+    function copyGen(username, password) {
+        navigator.clipboard.writeText(`${username}:${password}`);
+        showNotification('Copied!');
+    }
     function copyHistory(username, password) {
         navigator.clipboard.writeText(`${username}:${password}`);
-        alert('Copied!');
+        showNotification('Copied!');
     }
     function viewDetails(username, password) {
         document.getElementById('detailUsername').textContent = username;
@@ -215,6 +229,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = document.getElementById('detailUsername').textContent;
         const password = document.getElementById('detailPassword').textContent;
         navigator.clipboard.writeText(`${username}:${password}`);
-        alert('Copied!');
+        showNotification('Copied!');
+    }
+    function showNotification(message, type = 'success') {
+        notificationText.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.style.display = 'flex';
+        setTimeout(hideNotification, 3000);
+    }
+    function hideNotification() {
+        notification.style.display = 'none';
     }
 });
