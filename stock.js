@@ -1,6 +1,6 @@
-// stock.js - Add your alt accounts here
+// stock.js
 let stock = [
     { username: "RawrAlt1", password: "pass123" },
     { username: "RawrAlt2", password: "secure456" },
-    // Add more: { username: "...", password: "..." },
+    // Add more accounts here
 ];
