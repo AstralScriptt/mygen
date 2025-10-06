@@ -245,7 +245,8 @@ h1 {
         gap: 20px;
     }
 }
-/* Add to styles.css for signup page */
+
+/* Signup Page Styles */
 .signup-main {
     padding-top: 100px;
     display: flex;
