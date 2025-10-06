@@ -9,12 +9,11 @@
 </head>
 <body>
     <!-- Mobile Menu Toggle -->
-    <button class="mobile-toggle" id="mobileToggle" style="display: none;">
+    <button class="mobile-toggle" id="mobileToggle">
         <span></span>
         <span></span>
         <span></span>
     </button>
-
     <!-- Landing Page (Unauthenticated) -->
     <div id="landingPage" class="landing-container">
         <header class="landing-header">
@@ -27,7 +26,6 @@
                 <button id="getStartedBtn" class="nav-btn primary">Get Started</button>
             </nav>
         </header>
-
         <main class="landing-main">
             <div class="hero">
                 <div class="subtitle">
@@ -43,7 +41,6 @@
                 <p>Generate high quality Roblox alts with our advanced automation, fast, reliable, and completely secure.</p>
                 <button class="cta-btn" id="heroCta">Start Generating</button>
             </div>
-
             <div class="stats">
                 <div class="stat">
                     <span class="stat-number">10837</span>
@@ -60,7 +57,6 @@
             </div>
         </main>
     </div>
-
     <!-- Auth Modal -->
     <div id="authModal" class="modal">
         <div class="modal-overlay"></div>
@@ -102,7 +98,6 @@
             </form>
         </div>
     </div>
-
     <!-- Account Details Modal -->
     <div id="accountModal" class="modal">
         <div class="modal-overlay"></div>
@@ -132,7 +127,6 @@
             </div>
         </div>
     </div>
-
     <!-- Authenticated App -->
     <div id="app" class="app-container" style="display: none;">
         <!-- Desktop Nav -->
@@ -149,7 +143,6 @@
                 <button id="logoutBtn" class="nav-btn logout-btn">Logout</button>
             </nav>
         </header>
-
         <!-- Mobile Side Menu -->
         <aside class="sidebar" id="sidebar">
             <ul class="nav-menu">
@@ -160,7 +153,6 @@
                 <li><button id="logoutBtnMobile" class="nav-btn full-width logout-btn">Logout</button></li>
             </ul>
         </aside>
-
         <!-- Main Content -->
         <main class="app-main">
             <!-- Home Tab (Dashboard) -->
@@ -195,7 +187,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- Generate Tab -->
             <section id="generateTab" class="tab-content">
                 <div class="generate">
@@ -221,7 +212,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- History Tab -->
             <section id="historyTab" class="tab-content">
                 <div class="history">
@@ -231,7 +221,6 @@
                     </div>
                 </div>
             </section>
-
             <!-- Settings Tab -->
             <section id="settingsTab" class="tab-content">
                 <div class="settings">
@@ -241,7 +230,6 @@
             </section>
         </main>
     </div>
-
     <!-- Notification -->
     <div class="notification-container">
         <div id="notification" class="notification">
@@ -250,7 +238,6 @@
             <button class="notification-close">&times;</button>
         </div>
     </div>
-
     <script src="account.js"></script>
     <script src="stock.js"></script>
     <script src="app.js"></script>
