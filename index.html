@@ -1,66 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AltGen Display</title>
-  <style>
-    :root {
-      --bg: #0a0a0a;
-      --card: #141414;
-      --accent: #6ee7b7;
-      --muted: #9aa6b2;
-    }
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: Inter, system-ui, sans-serif;
-      background: var(--bg);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .card {
-      background: var(--card);
-      padding: 28px 40px;
-      border-radius: 14px;
-      box-shadow: 0 6px 30px rgba(0,0,0,0.5);
-      text-align: center;
-      max-width: 600px;
-      width: 90%;
-    }
-    h1 {
-      color: var(--accent);
-      font-size: 22px;
-      margin-bottom: 12px;
-    }
-    .output {
-      background: #0f0f0f;
-      padding: 16px;
-      border-radius: 10px;
-      word-break: break-all;
-      font-family: monospace;
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-    .label {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 6px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AltGen - Roblox Account Generator</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="card">
-    <h1>AltGen Display</h1>
-    <div class="label">Extracted Path:</div>
-    <div class="output" id="display"></div>
+  <div class="app-frame">
+    <div class="container">
+      <div class="left-panel">
+        <div class="header">
+          <h1>Account Generator</h1>
+          <span class="free-badge">Free</span>
+        </div>
+        <p class="subtitle">Generate premium Roblox accounts instantly</p>
+        
+        <div class="avatar">
+          <div class="avatar-wrapper">
+            <img src="https://tr.rbxcdn.com/HEADSHOT?width=80&height=80&format=png&userId=1" alt="Avatar" class="avatar-img"> <!-- Placeholder for Roblox-style avatar -->
+            <div class="check-overlay">✓</div>
+          </div>
+        </div>
+        
+        <div class="generated-account">
+          <div class="label">Account generated</div>
+          <div class="field">
+            <label>Username</label>
+            <div class="input-wrapper">
+              <input type="text" value="unstofer666" readonly>
+            </div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="input-wrapper">
+              <input type="password" value="jAr7GFbIPGqx" readonly>
+            </div>
+          </div>
+        </div>
+        
+        <button class="subscribe-btn">Subscribe for More Generations</button>
+      </div>
+      
+      <div class="right-panel">
+        <div class="panel-header">
+          <h2>Recent Generations</h2>
+          <p>View your account generations</p>
+        </div>
+        
+        <div class="generations-list">
+          <div class="generation-item">
+            <img src="https://tr.rbxcdn.com/HEADSHOT?width=40&height=40&format=png&userId=1" alt="Avatar" class="item-avatar">
+            <div class="item-details">
+              <div class="username">unstofer666</div>
+              <div class="time">about 2 months ago</div>
+            </div>
+            <div class="item-actions">
+              <div class="menu-dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="generation-item">
+            <img src="https://tr.rbxcdn.com/HEADSHOT?width=40&height=40&format=png&userId=2" alt="Avatar" class="item-avatar">
+            <div class="item-details">
+              <div class="username">ultimae660</div>
+              <div class="time">2 months ago</div>
+            </div>
+            <div class="item-actions">
+              <div class="menu-dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="generation-item">
+            <img src="https://tr.rbxcdn.com/HEADSHOT?width=40&height=40&format=png&userId=3" alt="Avatar" class="item-avatar">
+            <div class="item-details">
+              <div class="username">rpolay35</div>
+              <div class="time">2 months ago</div>
+            </div>
+            <div class="item-actions">
+              <div class="menu-dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="generation-item">
+            <img src="https://tr.rbxcdn.com/HEADSHOT?width=40&height=40&format=png&userId=4" alt="Avatar" class="item-avatar">
+            <div class="item-details">
+              <div class="username">holland007</div>
+              <div class="time">about 2 months ago</div>
+            </div>
+            <div class="item-actions">
+              <div class="menu-dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <button class="view-history-btn">
+          <span>View All History</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
-
-  <script>
-    const path = decodeURIComponent(window.location.pathname.slice(1));
-    document.getElementById('display').textContent = path || '[empty path]';
-  </script>
 </body>
 </html>
