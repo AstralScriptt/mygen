@@ -7,10 +7,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link type="image/png" sizes="16x16" rel="icon" href=".../icons8-copy-m_rounded-16.png">
-  <link type="image/png" sizes="96x96" rel="icon" href=".../icons8-copy-m_rounded-96.png">
-  <link type="image/png" sizes="16x16" rel="icon" href=".../icons8-eye-ios7-16.png">
-  <link type="image/png" sizes="96x96" rel="icon" href=".../icons8-eye-ios7-96.png">
   <style>
     :root {
       --bg: #0a0a0a;
@@ -125,7 +121,7 @@
     }
     .field {
       background: rgba(255, 255, 255, 0.02);
-      padding: 16px 52px 16px 16px;
+      padding: 16px 20px;
       border-radius: 12px;
       border: 1px solid var(--border);
       font-family: 'SF Mono', monospace;
@@ -134,50 +130,21 @@
       width: 100%;
       transition: all 0.2s ease;
       word-break: break-all;
+      cursor: pointer;
+      user-select: none;
     }
     .field:hover {
       border-color: rgba(110, 231, 183, 0.2);
+      background: rgba(110, 231, 183, 0.03);
+    }
+    .field:active {
+      transform: scale(0.98);
     }
     .username-field {
       color: var(--accent);
     }
     .password-field {
       color: #fbbf24;
-    }
-    .copy-btn {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-    }
-    .copy-btn:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-      transform: translateY(-50%) scale(1.05);
-    }
-    .copy-btn.copied {
-      background: var(--success);
-      border-color: var(--success);
-    }
-    .copy-btn img {
-      width: 16px;
-      height: 16px;
-      filter: brightness(0.8);
-    }
-    .copy-btn:hover img,
-    .copy-btn.copied img {
-      filter: brightness(0) invert(1);
     }
     .store-btn {
       background: linear-gradient(135deg, var(--accent), var(--accent-hover));
@@ -265,12 +232,9 @@
       margin-bottom: 16px;
       border-left: 4px solid var(--accent);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: default;
+      cursor: pointer;
       position: relative;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
     }
     .account-item::before {
       content: '';
@@ -292,9 +256,6 @@
     .account-item:hover::before {
       opacity: 1;
     }
-    .account-info {
-      flex: 1;
-    }
     .account-username {
       font-weight: 600;
       color: var(--accent);
@@ -310,33 +271,6 @@
       font-family: 'SF Mono', monospace;
       word-break: break-all;
       opacity: 0.8;
-    }
-    .view-btn {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      margin-left: 12px;
-    }
-    .view-btn:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-      transform: scale(1.05);
-    }
-    .view-btn img {
-      width: 16px;
-      height: 16px;
-      filter: brightness(0.8);
-    }
-    .view-btn:hover img {
-      filter: brightness(0) invert(1);
     }
     .no-accounts {
       text-align: center;
@@ -409,7 +343,7 @@
     }
     .modal-field {
       background: rgba(255, 255, 255, 0.02);
-      padding: 16px 52px 16px 16px;
+      padding: 16px 20px;
       border-radius: 12px;
       border: 1px solid var(--border);
       font-family: 'SF Mono', monospace;
@@ -418,44 +352,49 @@
       width: 100%;
       word-break: break-all;
       text-align: left;
-      position: relative;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+    .modal-field:hover {
+      border-color: rgba(110, 231, 183, 0.2);
+      background: rgba(110, 231, 183, 0.03);
+    }
+    .modal-field:active {
+      transform: scale(0.98);
     }
     .username-modal { color: var(--accent); }
     .password-modal { color: #fbbf24; }
-    .modal-copy-btn {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    /* Toast Notifications */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 2000;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
+      flex-direction: column;
+      gap: 12px;
     }
-    .modal-copy-btn:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-      transform: translateY(-50%) scale(1.05);
+    .toast {
+      background: var(--card);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--success);
+      transform: translateX(100%);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      max-width: 300px;
+      font-size: 14px;
+      font-weight: 500;
     }
-    .modal-copy-btn.copied {
-      background: var(--success);
-      border-color: var(--success);
+    .toast.show {
+      transform: translateX(0);
+      opacity: 1;
     }
-    .modal-copy-btn img {
-      width: 16px;
-      height: 16px;
-      filter: brightness(0.8);
-    }
-    .modal-copy-btn:hover img,
-    .modal-copy-btn.copied img {
-      filter: brightness(0) invert(1);
+    .toast.error {
+      border-left-color: var(--danger);
     }
     @media (max-width: 768px) {
       .container {
@@ -473,15 +412,11 @@
         padding: 32px;
         margin: 20px;
       }
-      .account-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-      .view-btn {
-        align-self: flex-end;
-        margin-left: 0;
-        margin-top: 4px;
+      #toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
       }
     }
   </style>
@@ -492,31 +427,19 @@
       <h1>AltGen Display</h1>
       <p class="subtitle">Current Credential Capture</p>
       <div class="current-account" id="current-account">
-        <div class="label">
-          <span>👤</span> Username
-        </div>
+        <div class="label">Username</div>
         <div class="field-container">
-          <div class="field username-field" id="current-username">[empty]</div>
-          <button class="copy-btn" onclick="copyToClipboard('current-username')" title="Copy Username">
-            <img src=".../icons8-copy-m_rounded-16.png" alt="Copy">
-          </button>
+          <div class="field username-field" id="current-username" onclick="copyField('current-username', 'Username copied')">[empty]</div>
         </div>
-        <div class="label">
-          <span>🔒</span> Password
-        </div>
+        <div class="label">Password</div>
         <div class="field-container">
-          <div class="field password-field" id="current-password">[empty]</div>
-          <button class="copy-btn" onclick="copyToClipboard('current-password')" title="Copy Password">
-            <img src=".../icons8-copy-m_rounded-16.png" alt="Copy">
-          </button>
+          <div class="field password-field" id="current-password" onclick="copyField('current-password', 'Password copied')">[empty]</div>
         </div>
         <button class="store-btn" id="store-btn" onclick="storeCurrent()">Store Account</button>
       </div>
     </div>
     <div class="accounts-panel">
-      <div class="panel-title">
-        <span>📁</span> Stored Accounts
-      </div>
+      <div class="panel-title">Stored Accounts</div>
       <div class="accounts-list" id="accounts-list">
         <div class="no-accounts">No accounts stored yet. Capture and store one above!</div>
       </div>
@@ -531,29 +454,23 @@
       <div class="modal-field-container">
         <div class="label">Username</div>
         <div class="field-container">
-          <div class="field username-modal" id="modal-username"></div>
-          <button class="modal-copy-btn" onclick="copyToClipboard('modal-username')" title="Copy Username">
-            <img src=".../icons8-copy-m_rounded-16.png" alt="Copy">
-          </button>
+          <div class="modal-field username-modal" id="modal-username" onclick="copyField('modal-username', 'Username copied')"></div>
         </div>
       </div>
       <div class="modal-field-container">
         <div class="label">Password</div>
         <div class="field-container">
-          <div class="field password-modal" id="modal-password"></div>
-          <button class="modal-copy-btn" onclick="copyToClipboard('modal-password')" title="Copy Password">
-            <img src=".../icons8-copy-m_rounded-16.png" alt="Copy">
-          </button>
+          <div class="modal-field password-modal" id="modal-password" onclick="copyField('modal-password', 'Password copied')"></div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
   <script>
     let currentAccount = null;
-
-    // Clear storage on load (simulates fresh session on refresh)
-    localStorage.removeItem('altgenAccounts');
 
     // Helper to get or initialize storage
     function getStoredAccounts() {
@@ -564,19 +481,42 @@
       localStorage.setItem('altgenAccounts', JSON.stringify(accounts));
     }
 
-    // Copy to clipboard function
-    function copyToClipboard(elementId) {
+    // Copy field and show toast
+    function copyField(elementId, message) {
       const element = document.getElementById(elementId);
       const text = element.textContent.trim();
-      if (text === '[empty]' || !text) return;
+      if (text === '[empty]' || !text) {
+        showToast('Nothing to copy', 'error');
+        return;
+      }
 
       navigator.clipboard.writeText(text).then(() => {
-        const btn = element.parentElement.querySelector('.copy-btn') || element.parentElement.querySelector('.modal-copy-btn');
-        btn.classList.add('copied');
-        setTimeout(() => {
-          btn.classList.remove('copied');
-        }, 1500);
+        showToast(message);
+      }).catch(() => {
+        showToast('Copy failed', 'error');
       });
+    }
+
+    // Show toast notification
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+
+      // Animate in
+      requestAnimationFrame(() => {
+        toast.classList.add('show');
+      });
+
+      // Remove after 3 seconds
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+          container.removeChild(toast);
+        }, 300);
+      }, 3000);
     }
 
     // Parse current path
@@ -612,7 +552,7 @@
       let accounts = getStoredAccounts();
       const exists = accounts.some(acc => acc.username === currentAccount.username && acc.password === currentAccount.password);
       if (exists) {
-        alert('Account already stored!');
+        showToast('Account already stored!', 'error');
         return;
       }
 
@@ -620,12 +560,14 @@
       saveStoredAccounts(accounts);
       renderAccounts();
       const btn = document.getElementById('store-btn');
+      const originalText = btn.textContent;
       btn.textContent = 'Stored!';
-      btn.style.background = 'linear-gradient(135deg, var(--success), #059669)';
+      btn.disabled = true;
       setTimeout(() => {
-        btn.textContent = 'Store Account';
-        btn.style.background = 'linear-gradient(135deg, var(--accent), var(--accent-hover))';
+        btn.textContent = originalText;
+        btn.disabled = false;
       }, 2000);
+      showToast('Account stored successfully!');
     }
 
     // Render accounts list
@@ -639,16 +581,9 @@
       }
 
       listEl.innerHTML = accounts.map((acc, index) => `
-        <div class="account-item">
-          <div class="account-info">
-            <div class="account-username">
-              <span>👤</span> ${acc.username}
-            </div>
-            <div class="account-password">🔒 ${acc.password.substring(0, 20)}${acc.password.length > 20 ? '...' : ''}</div>
-          </div>
-          <button class="view-btn" onclick="openModal(${index})" title="View Details">
-            <img src=".../icons8-eye-ios7-16.png" alt="View">
-          </button>
+        <div class="account-item" onclick="openModal(${index})">
+          <div class="account-username">${acc.username}</div>
+          <div class="account-password">${acc.password.substring(0, 20)}${acc.password.length > 20 ? '...' : ''}</div>
         </div>
       `).join('');
     }
@@ -675,7 +610,7 @@
       }
     });
 
-    // ESC key to close modal
+    // Close modal on Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeModal();
