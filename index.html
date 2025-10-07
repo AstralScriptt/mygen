@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AltGen Display</title>
+  <title>RawrGen</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -98,11 +98,29 @@
       border: 1px solid var(--border);
       transition: all 0.3s ease;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+      max-height: 600px;
+      overflow-y: auto;
     }
     .current-account:hover {
       border-color: var(--accent);
       box-shadow: 0 8px 32px rgba(110, 231, 183, 0.15), inset 0 1px 0 rgba(110, 231, 183, 0.1);
       transform: translateY(-2px);
+    }
+    .captured-title {
+      font-size: 18px;
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    .credential-item {
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .credential-item:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
     }
     .label {
       font-size: 14px;
@@ -150,13 +168,13 @@
       background: linear-gradient(135deg, var(--accent), var(--accent-hover));
       color: white;
       border: none;
-      padding: 14px 32px;
+      padding: 12px 24px;
       border-radius: 12px;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-top: 16px;
+      margin-top: 8px;
       width: 100%;
       box-shadow: 0 4px 16px rgba(110, 231, 183, 0.2);
     }
@@ -167,6 +185,10 @@
     .store-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+    }
+    .store-all-btn {
+      background: linear-gradient(135deg, var(--success), var(--warning));
+      margin-top: 16px;
     }
     .empty-state {
       color: var(--muted);
@@ -418,24 +440,19 @@
         left: 10px;
         max-width: none;
       }
+      .current-account {
+        max-width: none;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="main-panel">
-      <h1>AltGen Display</h1>
+      <h1>RawrGen</h1>
       <p class="subtitle">Current Credential Capture</p>
       <div class="current-account" id="current-account">
-        <div class="label">Username</div>
-        <div class="field-container">
-          <div class="field username-field" id="current-username" onclick="copyField('current-username', 'Username copied')">[empty]</div>
-        </div>
-        <div class="label">Password</div>
-        <div class="field-container">
-          <div class="field password-field" id="current-password" onclick="copyField('current-password', 'Password copied')">[empty]</div>
-        </div>
-        <button class="store-btn" id="store-btn" onclick="storeCurrent()">Store Account</button>
+        <div class="empty-state">No credentials captured</div>
       </div>
     </div>
     <div class="accounts-panel">
@@ -470,22 +487,22 @@
   <div id="toast-container"></div>
 
   <script>
-    let currentAccount = null;
+    let currentAccounts = [];
 
     // Helper to get or initialize storage
     function getStoredAccounts() {
-      return JSON.parse(localStorage.getItem('altgenAccounts') || '[]');
+      return JSON.parse(localStorage.getItem('rawrgenAccounts') || '[]');
     }
 
     function saveStoredAccounts(accounts) {
-      localStorage.setItem('altgenAccounts', JSON.stringify(accounts));
+      localStorage.setItem('rawrgenAccounts', JSON.stringify(accounts));
     }
 
     // Copy field and show toast
     function copyField(elementId, message) {
       const element = document.getElementById(elementId);
       const text = element.textContent.trim();
-      if (text === '[empty]' || !text) {
+      if (!text || text === '[empty]') {
         showToast('Nothing to copy', 'error');
         return;
       }
@@ -519,47 +536,81 @@
       }, 3000);
     }
 
+    // Render current accounts
+    function renderCurrentAccounts(currents) {
+      const container = document.getElementById('current-account');
+      if (currents.length === 0) {
+        container.innerHTML = '<div class="empty-state">No credentials captured</div>';
+        return;
+      }
+
+      let html = `<div class="captured-title">Captured Credentials (${currents.length})</div>`;
+      currents.forEach((acc, index) => {
+        const numLabel = index > 0 ? ` #${index + 1}` : '';
+        html += `
+          <div class="credential-item">
+            <div class="label">Username${numLabel}</div>
+            <div class="field-container">
+              <div class="field username-field" id="current-username-${index}" onclick="copyField('current-username-${index}', 'Username copied')">${acc.username}</div>
+            </div>
+            <div class="label">Password${numLabel}</div>
+            <div class="field-container">
+              <div class="field password-field" id="current-password-${index}" onclick="copyField('current-password-${index}', 'Password copied')">${acc.password}</div>
+            </div>
+            <button class="store-btn" onclick="storeCurrent(${index})">Store This Account</button>
+          </div>
+        `;
+      });
+
+      if (currents.length > 1) {
+        html += `<button class="store-btn store-all-btn" onclick="storeAllCurrent()">Store All (${currents.length})</button>`;
+      }
+
+      container.innerHTML = html;
+    }
+
     // Parse current path
     function parseCurrentPath() {
       const path = decodeURIComponent(window.location.pathname.slice(1)).trim();
       if (!path) {
-        document.getElementById('current-username').textContent = '[empty]';
-        document.getElementById('current-password').textContent = '[empty]';
-        document.getElementById('store-btn').disabled = true;
-        return null;
+        renderCurrentAccounts([]);
+        return [];
       }
 
-      const parts = path.split(':', 2);
-      const username = parts[0] || '';
-      const password = parts[1] || '';
-
-      document.getElementById('current-username').textContent = username || '[no username]';
-      document.getElementById('current-password').textContent = password || '[no password]';
-
-      if (username && password) {
-        document.getElementById('store-btn').disabled = false;
-        return { username, password };
-      } else {
-        document.getElementById('store-btn').disabled = true;
-        return null;
+      const pairs = path.split(/\s+/).map(p => p.trim()).filter(p => p);
+      let currents = [];
+      for (let pair of pairs) {
+        const parts = pair.split(':', 2);
+        const username = parts[0]?.trim() || '';
+        const password = parts[1]?.trim() || '';
+        if (username && password) {
+          currents.push({ username, password });
+        }
       }
+
+      currents = currents.slice(0, 30);
+      currentAccounts = currents;
+      renderCurrentAccounts(currents);
+      return currents;
     }
 
-    // Store current account
-    function storeCurrent() {
-      if (!currentAccount) return;
+    // Store specific current account
+    function storeCurrent(index) {
+      const acc = currentAccounts[index];
+      if (!acc) return;
 
       let accounts = getStoredAccounts();
-      const exists = accounts.some(acc => acc.username === currentAccount.username && acc.password === currentAccount.password);
+      const exists = accounts.some(a => a.username === acc.username && a.password === acc.password);
       if (exists) {
         showToast('Account already stored!', 'error');
         return;
       }
 
-      accounts.unshift(currentAccount);
+      accounts.unshift(acc);
       saveStoredAccounts(accounts);
       renderAccounts();
-      const btn = document.getElementById('store-btn');
+
+      const btn = event.target;
       const originalText = btn.textContent;
       btn.textContent = 'Stored!';
       btn.disabled = true;
@@ -568,6 +619,39 @@
         btn.disabled = false;
       }, 2000);
       showToast('Account stored successfully!');
+    }
+
+    // Store all current accounts
+    function storeAllCurrent() {
+      let accounts = getStoredAccounts();
+      let storedCount = 0;
+      let skippedCount = 0;
+
+      for (let acc of currentAccounts) {
+        const exists = accounts.some(a => a.username === acc.username && a.password === acc.password);
+        if (!exists) {
+          accounts.unshift(acc);
+          storedCount++;
+        } else {
+          skippedCount++;
+        }
+      }
+
+      if (storedCount > 0) {
+        saveStoredAccounts(accounts);
+        renderAccounts();
+      }
+
+      let message = `${storedCount} account${storedCount !== 1 ? 's' : ''} stored`;
+      if (skippedCount > 0) {
+        message += `, ${skippedCount} skipped (duplicates)`;
+      }
+      showToast(message);
+
+      // Disable store all button temporarily
+      const btn = event.target;
+      btn.disabled = true;
+      setTimeout(() => { btn.disabled = false; }, 2000);
     }
 
     // Render accounts list
@@ -618,7 +702,7 @@
     });
 
     // Initialize
-    currentAccount = parseCurrentPath();
+    parseCurrentPath();
     renderAccounts();
   </script>
 </body>
