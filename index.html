@@ -1,245 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RawrGen - Premium Roblox Alts</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AltGen Display</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #141414;
+      --accent: #6ee7b7;
+      --muted: #9aa6b2;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: var(--card);
+      padding: 28px 40px;
+      border-radius: 14px;
+      box-shadow: 0 6px 30px rgba(0,0,0,0.5);
+      text-align: center;
+      max-width: 600px;
+      width: 90%;
+    }
+    h1 {
+      color: var(--accent);
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .output {
+      background: #0f0f0f;
+      padding: 16px;
+      border-radius: 10px;
+      word-break: break-all;
+      font-family: monospace;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+  </style>
 </head>
 <body>
-    <!-- Mobile Menu Toggle -->
-    <button class="mobile-toggle" id="mobileToggle">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
-    <!-- Landing Page (Unauthenticated) -->
-    <div id="landingPage" class="landing-container">
-        <header class="landing-header">
-            <div class="logo">
-                <span class="logo-triangle">△</span>
-                RawrGen
-            </div>
-            <nav class="landing-nav">
-                <button id="signInBtn" class="nav-btn">Sign In</button>
-                <button id="getStartedBtn" class="nav-btn primary">Get Started</button>
-            </nav>
-        </header>
-        <main class="landing-main">
-            <div class="hero">
-                <div class="subtitle">
-                    <span class="green-dot">•</span>
-                    Alt Generation Service
-                </div>
-                <h1>
-                    <span class="premium">PREMIUM</span>
-                    <br>
-                    <span class="roblox">ROBLOX</span>
-                    <span class="alts">ALTS</span>
-                </h1>
-                <p>Generate high quality Roblox alts with our advanced automation, fast, reliable, and completely secure.</p>
-                <button class="cta-btn" id="heroCta">Start Generating</button>
-            </div>
-            <div class="stats">
-                <div class="stat">
-                    <span class="stat-number">10837</span>
-                    <span class="stat-label">Alts Available</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">100%</span>
-                    <span class="stat-label">Success Rate</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">Generation</span>
-                </div>
-            </div>
-        </main>
-    </div>
-    <!-- Auth Modal -->
-    <div id="authModal" class="modal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div class="modal-header">
-                <h3 id="modalTitle">Sign Up</h3>
-                <div class="modal-divider"></div>
-            </div>
-            <form id="regForm" class="auth-form">
-                <div class="input-group">
-                    <input type="email" id="regEmail" placeholder="Email" required>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="regUsername" placeholder="Username" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="regPassword" placeholder="Password" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="regConfirmPassword" placeholder="Confirm Password" required>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="terms" required>
-                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
-                </div>
-                <button type="submit" class="btn-auth full-width">Sign Up</button>
-                <p class="auth-switch">Already have an account? <a href="#" id="switchToLogin">Sign in</a></p>
-            </form>
-            <form id="loginForm" class="auth-form" style="display: none;">
-                <div class="input-group">
-                    <input type="email" id="loginEmail" placeholder="Email" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="loginPassword" placeholder="Password" required>
-                </div>
-                <button type="submit" class="btn-auth full-width">Sign In</button>
-                <p class="auth-switch">Don't have an account? <a href="#" id="switchToReg">Sign up</a></p>
-            </form>
-        </div>
-    </div>
-    <!-- Account Details Modal -->
-    <div id="accountModal" class="modal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content account-details">
-            <span class="close">&times;</span>
-            <div class="modal-header">
-                <h3>Account Details</h3>
-            </div>
-            <div class="account-info">
-                <img src="https://via.placeholder.com/80?text=R" alt="Avatar" class="account-avatar">
-                <div class="account-data">
-                    <div class="data-row">
-                        <label>Username</label>
-                        <p id="detailUsername"></p>
-                    </div>
-                    <div class="data-row">
-                        <label>Password</label>
-                        <p id="detailPassword"></p>
-                    </div>
-                </div>
-                <div class="warning">
-                    <p>WARNING - DO NOT SHARE THIS - Sharing will result in account termination.</p>
-                </div>
-                <div class="data-actions">
-                    <button class="btn-copy" id="copyBtn">Copy Credentials</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Authenticated App -->
-    <div id="app" class="app-container" style="display: none;">
-        <!-- Desktop Nav -->
-        <header class="app-header">
-            <div class="logo">
-                <span class="logo-triangle">△</span>
-                RawrGen
-            </div>
-            <nav class="app-nav">
-                <a href="#" class="nav-link active" data-tab="home">Home</a>
-                <a href="#" class="nav-link" data-tab="generate">Generate</a>
-                <a href="#" class="nav-link" data-tab="history">History</a>
-                <a href="#" class="nav-link" data-tab="settings">Settings</a>
-                <button id="logoutBtn" class="nav-btn logout-btn">Logout</button>
-            </nav>
-        </header>
-        <!-- Mobile Side Menu -->
-        <aside class="sidebar" id="sidebar">
-            <ul class="nav-menu">
-                <li><a href="#" class="nav-link active" data-tab="home">Home</a></li>
-                <li><a href="#" class="nav-link" data-tab="generate">Generate</a></li>
-                <li><a href="#" class="nav-link" data-tab="history">History</a></li>
-                <li><a href="#" class="nav-link" data-tab="settings">Settings</a></li>
-                <li><button id="logoutBtnMobile" class="nav-btn full-width logout-btn">Logout</button></li>
-            </ul>
-        </aside>
-        <!-- Main Content -->
-        <main class="app-main">
-            <!-- Home Tab (Dashboard) -->
-            <section id="homeTab" class="tab-content active">
-                <div class="dashboard">
-                    <h1>Dashboard</h1>
-                    <div class="dashboard-stats">
-                        <div class="stat-box">
-                            <h3>Stock</h3>
-                            <p id="stockCount">0</p>
-                            <small>Available alts</small>
-                        </div>
-                        <div class="stat-box">
-                            <h3>Generations</h3>
-                            <p id="genCount">0</p>
-                            <small>Total created</small>
-                        </div>
-                    </div>
-                    <div class="news-section">
-                        <h3>News</h3>
-                        <div class="news-item">
-                            <span class="news-badge">New Features</span>
-                            <p>Flow Update Wave 2: Introducing Tokens, API Access, Referral Rewards</p>
-                            <small>2025-07-25</small>
-                        </div>
-                        <a href="#" class="view-all-news">View all →</a>
-                    </div>
-                    <div class="quick-links">
-                        <a href="#" class="quick-btn">Discord Community</a>
-                        <a href="#" class="quick-btn">Contact</a>
-                        <a href="#" class="quick-btn">Partners</a>
-                    </div>
-                </div>
-            </section>
-            <!-- Generate Tab -->
-            <section id="generateTab" class="tab-content">
-                <div class="generate">
-                    <h1>Generate</h1>
-                    <div class="generate-grid">
-                        <div class="generator-form">
-                            <h3>Account Generator</h3>
-                            <p>Generate premium Roblox accounts instantly</p>
-                            <div class="limits">
-                                <p>Accounts Generated: <span id="generatedCount">0</span></p>
-                                <p>Daily Limit: 0/12</p>
-                            </div>
-                            <button class="btn-auth full-width" id="generateBtn">Generate Account</button>
-                        </div>
-                        <div class="recent-gens">
-                            <h3>Generated Accounts</h3>
-                            <p>View your recent account generations</p>
-                            <div id="recentList" class="gen-list">
-                                <!-- Dynamically populated -->
-                            </div>
-                            <a href="#" class="view-all" data-tab="history">View All History</a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            <!-- History Tab -->
-            <section id="historyTab" class="tab-content">
-                <div class="history">
-                    <h1>History</h1>
-                    <div id="historyList" class="history-grid">
-                        <!-- Dynamically populated -->
-                    </div>
-                </div>
-            </section>
-            <!-- Settings Tab -->
-            <section id="settingsTab" class="tab-content">
-                <div class="settings">
-                    <h1>Settings</h1>
-                    <p>Settings options will appear here.</p>
-                </div>
-            </section>
-        </main>
-    </div>
-    <!-- Notification -->
-    <div class="notification-container">
-        <div id="notification" class="notification">
-            <span class="notification-icon">!</span>
-            <p id="notification-text"></p>
-            <button class="notification-close">&times;</button>
-        </div>
-    </div>
-    <script src="account.js"></script>
-    <script src="stock.js"></script>
-    <script src="app.js"></script>
+  <div class="card">
+    <h1>AltGen Display</h1>
+    <div class="label">Extracted Path:</div>
+    <div class="output" id="display"></div>
+  </div>
+
+  <script>
+    const path = decodeURIComponent(window.location.pathname.slice(1));
+    document.getElementById('display').textContent = path || '[empty path]';
+  </script>
 </body>
 </html>
