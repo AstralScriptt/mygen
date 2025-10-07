@@ -7,6 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link type="image/png" sizes="16x16" rel="icon" href=".../icons8-copy-m_rounded-16.png">
+  <link type="image/png" sizes="96x96" rel="icon" href=".../icons8-copy-m_rounded-96.png">
+  <link type="image/png" sizes="16x16" rel="icon" href=".../icons8-eye-ios7-16.png">
+  <link type="image/png" sizes="96x96" rel="icon" href=".../icons8-eye-ios7-96.png">
   <style>
     :root {
       --bg: #0a0a0a;
@@ -121,7 +125,7 @@
     }
     .field {
       background: rgba(255, 255, 255, 0.02);
-      padding: 16px 20px 16px 16px;
+      padding: 16px 52px 16px 16px;
       border-radius: 12px;
       border: 1px solid var(--border);
       font-family: 'SF Mono', monospace;
@@ -148,25 +152,32 @@
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 8px 12px;
+      padding: 8px;
       cursor: pointer;
-      color: var(--muted);
-      font-size: 14px;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
     }
     .copy-btn:hover {
       background: var(--accent);
-      color: white;
       border-color: var(--accent);
       transform: translateY(-50%) scale(1.05);
     }
     .copy-btn.copied {
       background: var(--success);
       border-color: var(--success);
-      color: white;
+    }
+    .copy-btn img {
+      width: 16px;
+      height: 16px;
+      filter: brightness(0.8);
+    }
+    .copy-btn:hover img,
+    .copy-btn.copied img {
+      filter: brightness(0) invert(1);
     }
     .store-btn {
       background: linear-gradient(135deg, var(--accent), var(--accent-hover));
@@ -254,9 +265,12 @@
       margin-bottom: 16px;
       border-left: 4px solid var(--accent);
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      cursor: pointer;
+      cursor: default;
       position: relative;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
     .account-item::before {
       content: '';
@@ -278,6 +292,9 @@
     .account-item:hover::before {
       opacity: 1;
     }
+    .account-info {
+      flex: 1;
+    }
     .account-username {
       font-weight: 600;
       color: var(--accent);
@@ -293,6 +310,33 @@
       font-family: 'SF Mono', monospace;
       word-break: break-all;
       opacity: 0.8;
+    }
+    .view-btn {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      margin-left: 12px;
+    }
+    .view-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: scale(1.05);
+    }
+    .view-btn img {
+      width: 16px;
+      height: 16px;
+      filter: brightness(0.8);
+    }
+    .view-btn:hover img {
+      filter: brightness(0) invert(1);
     }
     .no-accounts {
       text-align: center;
@@ -365,7 +409,7 @@
     }
     .modal-field {
       background: rgba(255, 255, 255, 0.02);
-      padding: 16px 20px;
+      padding: 16px 52px 16px 16px;
       border-radius: 12px;
       border: 1px solid var(--border);
       font-family: 'SF Mono', monospace;
@@ -374,9 +418,45 @@
       width: 100%;
       word-break: break-all;
       text-align: left;
+      position: relative;
     }
     .username-modal { color: var(--accent); }
     .password-modal { color: #fbbf24; }
+    .modal-copy-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+    }
+    .modal-copy-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: translateY(-50%) scale(1.05);
+    }
+    .modal-copy-btn.copied {
+      background: var(--success);
+      border-color: var(--success);
+    }
+    .modal-copy-btn img {
+      width: 16px;
+      height: 16px;
+      filter: brightness(0.8);
+    }
+    .modal-copy-btn:hover img,
+    .modal-copy-btn.copied img {
+      filter: brightness(0) invert(1);
+    }
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
@@ -393,6 +473,16 @@
         padding: 32px;
         margin: 20px;
       }
+      .account-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .view-btn {
+        align-self: flex-end;
+        margin-left: 0;
+        margin-top: 4px;
+      }
     }
   </style>
 </head>
@@ -407,14 +497,18 @@
         </div>
         <div class="field-container">
           <div class="field username-field" id="current-username">[empty]</div>
-          <button class="copy-btn" onclick="copyToClipboard('current-username')" title="Copy Username">📋</button>
+          <button class="copy-btn" onclick="copyToClipboard('current-username')" title="Copy Username">
+            <img src=".../icons8-copy-m_rounded-16.png" alt="Copy">
+          </button>
         </div>
         <div class="label">
           <span>🔒</span> Password
         </div>
         <div class="field-container">
           <div class="field password-field" id="current-password">[empty]</div>
-          <button class="copy-btn" onclick="copyToClipboard('current-password')" title="Copy Password">📋</button>
+          <button class="copy-btn" onclick="copyToClipboard('current-password')" title="Copy Password">
+            <img src=".../icons8-copy-m_rounded-16.png" alt="Copy">
+          </button>
         </div>
         <button class="store-btn" id="store-btn" onclick="storeCurrent()">Store Account</button>
       </div>
@@ -438,14 +532,18 @@
         <div class="label">Username</div>
         <div class="field-container">
           <div class="field username-modal" id="modal-username"></div>
-          <button class="copy-btn" onclick="copyToClipboard('modal-username')" title="Copy Username">📋</button>
+          <button class="modal-copy-btn" onclick="copyToClipboard('modal-username')" title="Copy Username">
+            <img src=".../icons8-copy-m_rounded-16.png" alt="Copy">
+          </button>
         </div>
       </div>
       <div class="modal-field-container">
         <div class="label">Password</div>
         <div class="field-container">
           <div class="field password-modal" id="modal-password"></div>
-          <button class="copy-btn" onclick="copyToClipboard('modal-password')" title="Copy Password">📋</button>
+          <button class="modal-copy-btn" onclick="copyToClipboard('modal-password')" title="Copy Password">
+            <img src=".../icons8-copy-m_rounded-16.png" alt="Copy">
+          </button>
         </div>
       </div>
     </div>
@@ -473,12 +571,10 @@
       if (text === '[empty]' || !text) return;
 
       navigator.clipboard.writeText(text).then(() => {
-        const btn = element.parentElement.querySelector('.copy-btn');
+        const btn = element.parentElement.querySelector('.copy-btn') || element.parentElement.querySelector('.modal-copy-btn');
         btn.classList.add('copied');
-        btn.innerHTML = '✓';
         setTimeout(() => {
           btn.classList.remove('copied');
-          btn.innerHTML = '📋';
         }, 1500);
       });
     }
@@ -523,9 +619,12 @@
       accounts.unshift(currentAccount);
       saveStoredAccounts(accounts);
       renderAccounts();
-      document.getElementById('store-btn').textContent = 'Stored!';
+      const btn = document.getElementById('store-btn');
+      btn.textContent = 'Stored!';
+      btn.style.background = 'linear-gradient(135deg, var(--success), #059669)';
       setTimeout(() => {
-        document.getElementById('store-btn').textContent = 'Store Account';
+        btn.textContent = 'Store Account';
+        btn.style.background = 'linear-gradient(135deg, var(--accent), var(--accent-hover))';
       }, 2000);
     }
 
@@ -540,11 +639,16 @@
       }
 
       listEl.innerHTML = accounts.map((acc, index) => `
-        <div class="account-item" onclick="openModal(${index})">
-          <div class="account-username">
-            <span>👤</span> ${acc.username}
+        <div class="account-item">
+          <div class="account-info">
+            <div class="account-username">
+              <span>👤</span> ${acc.username}
+            </div>
+            <div class="account-password">🔒 ${acc.password.substring(0, 20)}${acc.password.length > 20 ? '...' : ''}</div>
           </div>
-          <div class="account-password">🔒 ${acc.password.substring(0, 20)}${acc.password.length > 20 ? '...' : ''}</div>
+          <button class="view-btn" onclick="openModal(${index})" title="View Details">
+            <img src=".../icons8-eye-ios7-16.png" alt="View">
+          </button>
         </div>
       `).join('');
     }
@@ -567,6 +671,13 @@
     // Close modal on outside click
     document.getElementById('account-modal').addEventListener('click', (e) => {
       if (e.target === document.getElementById('account-modal')) {
+        closeModal();
+      }
+    });
+
+    // ESC key to close modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
         closeModal();
       }
     });
