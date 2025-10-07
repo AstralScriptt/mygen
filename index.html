@@ -16,8 +16,11 @@
       --muted: #9aa6b2;
       --border: rgba(255, 255, 255, 0.08);
       --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.4);
       --success: #10b981;
       --warning: #f59e0b;
+      --danger: #ef4444;
+      --glass: rgba(255, 255, 255, 0.05);
     }
     * {
       box-sizing: border-box;
@@ -27,24 +30,25 @@
       padding: 0;
       height: 100%;
       font-family: 'Inter', system-ui, sans-serif;
-      background: linear-gradient(135deg, var(--bg) 0%, #1a1a2e 100%);
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
       color: white;
       overflow-x: hidden;
     }
     .container {
       display: flex;
       min-height: 100vh;
-      padding: 20px;
-      gap: 24px;
-      max-width: 1400px;
+      padding: 24px;
+      gap: 32px;
+      max-width: 1600px;
       margin: 0 auto;
       width: 100%;
     }
     .main-panel {
       flex: 1;
-      background: var(--card);
-      padding: 32px;
-      border-radius: 20px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      padding: 40px;
+      border-radius: 24px;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
@@ -53,6 +57,8 @@
       text-align: center;
       position: relative;
       overflow: hidden;
+      border: 1px solid var(--border);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .main-panel::before {
       content: '';
@@ -61,57 +67,72 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+      background: linear-gradient(90deg, var(--accent), var(--accent-hover), var(--success));
+      animation: shimmer 3s infinite linear;
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
     }
     h1 {
       color: var(--accent);
-      font-size: 28px;
-      font-weight: 600;
+      font-size: 32px;
+      font-weight: 700;
       margin-bottom: 8px;
       letter-spacing: -0.5px;
+      position: relative;
+      z-index: 1;
     }
     .subtitle {
-      font-size: 14px;
+      font-size: 15px;
       color: var(--muted);
-      margin-bottom: 32px;
+      margin-bottom: 40px;
       font-weight: 300;
     }
     .current-account {
-      background: #0f0f0f;
-      padding: 24px;
-      border-radius: 16px;
+      background: var(--card);
+      padding: 32px;
+      border-radius: 20px;
       width: 100%;
-      max-width: 400px;
+      max-width: 450px;
       border: 1px solid var(--border);
       transition: all 0.3s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
     }
     .current-account:hover {
       border-color: var(--accent);
-      box-shadow: 0 4px 16px rgba(110, 231, 183, 0.1);
+      box-shadow: 0 8px 32px rgba(110, 231, 183, 0.15), inset 0 1px 0 rgba(110, 231, 183, 0.1);
+      transform: translateY(-2px);
     }
     .label {
-      font-size: 13px;
+      font-size: 14px;
       color: var(--muted);
-      margin-bottom: 8px;
-      font-weight: 400;
+      margin-bottom: 12px;
+      font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .field-container {
+      position: relative;
+      margin-bottom: 24px;
     }
     .field {
       background: rgba(255, 255, 255, 0.02);
-      padding: 12px 16px;
-      border-radius: 8px;
+      padding: 16px 20px 16px 16px;
+      border-radius: 12px;
       border: 1px solid var(--border);
       font-family: 'SF Mono', monospace;
       font-size: 16px;
       color: white;
-      margin-bottom: 16px;
+      width: 100%;
+      transition: all 0.2s ease;
       word-break: break-all;
-      transition: border-color 0.2s ease;
     }
-    .field:focus {
-      outline: none;
-      border-color: var(--accent);
+    .field:hover {
+      border-color: rgba(110, 231, 183, 0.2);
     }
     .username-field {
       color: var(--accent);
@@ -119,21 +140,75 @@
     .password-field {
       color: #fbbf24;
     }
+    .copy-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 14px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .copy-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: translateY(-50%) scale(1.05);
+    }
+    .copy-btn.copied {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+    .store-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 16px;
+      width: 100%;
+      box-shadow: 0 4px 16px rgba(110, 231, 183, 0.2);
+    }
+    .store-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(110, 231, 183, 0.3);
+    }
+    .store-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
     .empty-state {
       color: var(--muted);
       font-style: italic;
       font-size: 14px;
+      text-align: center;
+      padding: 40px;
     }
     .accounts-panel {
-      width: 320px;
-      background: var(--card);
-      padding: 24px;
-      border-radius: 20px;
+      width: 380px;
+      background: var(--glass);
+      backdrop-filter: blur(20px);
+      padding: 32px;
+      border-radius: 24px;
       box-shadow: var(--shadow);
       display: flex;
-      flex-direction:  column;
+      flex-direction: column;
       position: relative;
       overflow: hidden;
+      border: 1px solid var(--border);
     }
     .accounts-panel::before {
       content: '';
@@ -142,65 +217,181 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, var(--success), var(--warning));
+      background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+      animation: shimmer 2s infinite linear reverse;
     }
     .panel-title {
-      font-size: 18px;
-      font-weight: 500;
-      margin-bottom: 20px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 24px;
       color: white;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 12px;
     }
     .accounts-list {
       flex: 1;
       overflow-y: auto;
-      max-height: 500px;
+      max-height: 600px;
       margin-top: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) transparent;
+    }
+    .accounts-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .accounts-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .accounts-list::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 3px;
     }
     .account-item {
-      background: #0f0f0f;
-      padding: 12px 16px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      border-left: 3px solid var(--accent);
-      transition: all 0.2s ease;
+      background: var(--card);
+      padding: 16px 20px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--accent);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .account-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
     .account-item:hover {
-      background: rgba(110, 231, 183, 0.05);
+      background: rgba(110, 231, 183, 0.08);
       border-left-color: var(--accent-hover);
+      transform: translateX(4px);
+      box-shadow: 0 4px 16px rgba(110, 231, 183, 0.1);
+    }
+    .account-item:hover::before {
+      opacity: 1;
     }
     .account-username {
-      font-weight: 500;
+      font-weight: 600;
       color: var(--accent);
-      font-size: 14px;
-      margin-bottom: 4px;
+      font-size: 15px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .account-password {
       color: #fbbf24;
       font-size: 13px;
       font-family: 'SF Mono', monospace;
       word-break: break-all;
+      opacity: 0.8;
     }
     .no-accounts {
       text-align: center;
       color: var(--muted);
       font-style: italic;
-      font-size: 14px;
-      margin-top: 20px;
+      font-size: 15px;
+      margin-top: 40px;
+      padding: 20px;
     }
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.3s ease;
+    }
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content {
+      background: var(--card);
+      padding: 40px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border);
+      position: relative;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+    .close-btn:hover {
+      color: var(--danger);
+    }
+    .modal-title {
+      font-size: 24px;
+      color: var(--accent);
+      margin-bottom: 24px;
+      font-weight: 600;
+    }
+    .modal-field-container {
+      margin-bottom: 24px;
+    }
+    .modal-field {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font-family: 'SF Mono', monospace;
+      font-size: 16px;
+      color: white;
+      width: 100%;
+      word-break: break-all;
+      text-align: left;
+    }
+    .username-modal { color: var(--accent); }
+    .password-modal { color: #fbbf24; }
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
         padding: 16px;
+        gap: 24px;
       }
       .accounts-panel {
         width: 100%;
       }
       .main-panel {
-        padding: 24px;
+        padding: 32px;
+      }
+      .modal-content {
+        padding: 32px;
+        margin: 20px;
       }
     }
   </style>
@@ -210,22 +401,62 @@
     <div class="main-panel">
       <h1>AltGen Display</h1>
       <p class="subtitle">Current Credential Capture</p>
-      <div class="current-account">
-        <div class="label">Username</div>
-        <div class="field username-field" id="current-username">[empty]</div>
-        <div class="label">Password</div>
-        <div class="field password-field" id="current-password">[empty]</div>
+      <div class="current-account" id="current-account">
+        <div class="label">
+          <span>👤</span> Username
+        </div>
+        <div class="field-container">
+          <div class="field username-field" id="current-username">[empty]</div>
+          <button class="copy-btn" onclick="copyToClipboard('current-username')" title="Copy Username">📋</button>
+        </div>
+        <div class="label">
+          <span>🔒</span> Password
+        </div>
+        <div class="field-container">
+          <div class="field password-field" id="current-password">[empty]</div>
+          <button class="copy-btn" onclick="copyToClipboard('current-password')" title="Copy Password">📋</button>
+        </div>
+        <button class="store-btn" id="store-btn" onclick="storeCurrent()">Store Account</button>
       </div>
     </div>
     <div class="accounts-panel">
-      <div class="panel-title">Stored Accounts</div>
+      <div class="panel-title">
+        <span>📁</span> Stored Accounts
+      </div>
       <div class="accounts-list" id="accounts-list">
-        <div class="no-accounts">No accounts stored yet.</div>
+        <div class="no-accounts">No accounts stored yet. Capture and store one above!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="account-modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+      <h2 class="modal-title">Account Details</h2>
+      <div class="modal-field-container">
+        <div class="label">Username</div>
+        <div class="field-container">
+          <div class="field username-modal" id="modal-username"></div>
+          <button class="copy-btn" onclick="copyToClipboard('modal-username')" title="Copy Username">📋</button>
+        </div>
+      </div>
+      <div class="modal-field-container">
+        <div class="label">Password</div>
+        <div class="field-container">
+          <div class="field password-modal" id="modal-password"></div>
+          <button class="copy-btn" onclick="copyToClipboard('modal-password')" title="Copy Password">📋</button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
+    let currentAccount = null;
+
+    // Clear storage on load (simulates fresh session on refresh)
+    localStorage.removeItem('altgenAccounts');
+
     // Helper to get or initialize storage
     function getStoredAccounts() {
       return JSON.parse(localStorage.getItem('altgenAccounts') || '[]');
@@ -235,12 +466,30 @@
       localStorage.setItem('altgenAccounts', JSON.stringify(accounts));
     }
 
+    // Copy to clipboard function
+    function copyToClipboard(elementId) {
+      const element = document.getElementById(elementId);
+      const text = element.textContent.trim();
+      if (text === '[empty]' || !text) return;
+
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = element.parentElement.querySelector('.copy-btn');
+        btn.classList.add('copied');
+        btn.innerHTML = '✓';
+        setTimeout(() => {
+          btn.classList.remove('copied');
+          btn.innerHTML = '📋';
+        }, 1500);
+      });
+    }
+
     // Parse current path
     function parseCurrentPath() {
       const path = decodeURIComponent(window.location.pathname.slice(1)).trim();
       if (!path) {
         document.getElementById('current-username').textContent = '[empty]';
         document.getElementById('current-password').textContent = '[empty]';
+        document.getElementById('store-btn').disabled = true;
         return null;
       }
 
@@ -251,20 +500,33 @@
       document.getElementById('current-username').textContent = username || '[no username]';
       document.getElementById('current-password').textContent = password || '[no password]';
 
-      return { username, password };
+      if (username && password) {
+        document.getElementById('store-btn').disabled = false;
+        return { username, password };
+      } else {
+        document.getElementById('store-btn').disabled = true;
+        return null;
+      }
     }
 
-    // Add current to storage if valid and not duplicate
-    function addToStorage(current) {
-      if (!current || !current.username) return;
+    // Store current account
+    function storeCurrent() {
+      if (!currentAccount) return;
 
       let accounts = getStoredAccounts();
-      const exists = accounts.some(acc => acc.username === current.username && acc.password === current.password);
-      if (!exists) {
-        accounts.unshift(current); // Add to top
-        saveStoredAccounts(accounts);
-        renderAccounts();
+      const exists = accounts.some(acc => acc.username === currentAccount.username && acc.password === currentAccount.password);
+      if (exists) {
+        alert('Account already stored!');
+        return;
       }
+
+      accounts.unshift(currentAccount);
+      saveStoredAccounts(accounts);
+      renderAccounts();
+      document.getElementById('store-btn').textContent = 'Stored!';
+      setTimeout(() => {
+        document.getElementById('store-btn').textContent = 'Store Account';
+      }, 2000);
     }
 
     // Render accounts list
@@ -273,21 +535,44 @@
       const listEl = document.getElementById('accounts-list');
       
       if (accounts.length === 0) {
-        listEl.innerHTML = '<div class="no-accounts">No accounts stored yet.</div>';
+        listEl.innerHTML = '<div class="no-accounts">No accounts stored yet. Capture and store one above!</div>';
         return;
       }
 
-      listEl.innerHTML = accounts.map(acc => `
-        <div class="account-item">
-          <div class="account-username">${acc.username}</div>
-          <div class="account-password">${acc.password}</div>
+      listEl.innerHTML = accounts.map((acc, index) => `
+        <div class="account-item" onclick="openModal(${index})">
+          <div class="account-username">
+            <span>👤</span> ${acc.username}
+          </div>
+          <div class="account-password">🔒 ${acc.password.substring(0, 20)}${acc.password.length > 20 ? '...' : ''}</div>
         </div>
       `).join('');
     }
 
+    // Modal functions
+    function openModal(index) {
+      const accounts = getStoredAccounts();
+      const acc = accounts[index];
+      if (!acc) return;
+
+      document.getElementById('modal-username').textContent = acc.username;
+      document.getElementById('modal-password').textContent = acc.password;
+      document.getElementById('account-modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('account-modal').classList.remove('active');
+    }
+
+    // Close modal on outside click
+    document.getElementById('account-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('account-modal')) {
+        closeModal();
+      }
+    });
+
     // Initialize
-    const current = parseCurrentPath();
-    addToStorage(current);
+    currentAccount = parseCurrentPath();
     renderAccounts();
   </script>
 </body>
