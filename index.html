@@ -21,6 +21,9 @@
       --warning: #f59e0b;
       --danger: #ef4444;
       --glass: rgba(255, 255, 255, 0.05);
+      --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --glow: 0 0 20px rgba(110, 231, 183, 0.3);
     }
     * {
       box-sizing: border-box;
@@ -30,9 +33,28 @@
       padding: 0;
       height: 100%;
       font-family: 'Inter', system-ui, sans-serif;
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+      background: var(--bg);
       color: white;
       overflow-x: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+      animation: float 20s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
     }
     .container {
       display: flex;
@@ -53,7 +75,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       text-align: center;
       position: relative;
       overflow: hidden;
@@ -67,7 +89,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, var(--accent), var(--accent-hover), var(--success));
+      background: var(--gradient-primary);
       animation: shimmer 3s infinite linear;
     }
     @keyframes shimmer {
@@ -76,51 +98,89 @@
     }
     h1 {
       color: var(--accent);
-      font-size: 32px;
+      font-size: 36px;
       font-weight: 700;
       margin-bottom: 8px;
       letter-spacing: -0.5px;
       position: relative;
       z-index: 1;
+      animation: slideInDown 1s ease-out;
+    }
+    @keyframes slideInDown {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     .subtitle {
       font-size: 15px;
       color: var(--muted);
       margin-bottom: 40px;
       font-weight: 300;
+      animation: fadeInUp 1s ease-out 0.2s both;
+    }
+    @keyframes fadeInUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     .current-account {
       background: var(--card);
       padding: 32px;
       border-radius: 20px;
       width: 100%;
-      max-width: 450px;
+      max-width: 500px;
       border: 1px solid var(--border);
       transition: all 0.3s ease;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-      max-height: 600px;
+      max-height: 70vh;
       overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--accent) transparent;
+    }
+    .current-account::-webkit-scrollbar {
+      width: 6px;
+    }
+    .current-account::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .current-account::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 3px;
     }
     .current-account:hover {
       border-color: var(--accent);
-      box-shadow: 0 8px 32px rgba(110, 231, 183, 0.15), inset 0 1px 0 rgba(110, 231, 183, 0.1);
+      box-shadow: var(--glow), inset 0 1px 0 rgba(110, 231, 183, 0.1);
       transform: translateY(-2px);
     }
     .captured-title {
-      font-size: 18px;
+      font-size: 20px;
       color: var(--accent);
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeInUp 0.8s ease-out;
     }
     .credential-item {
-      margin-bottom: 24px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      opacity: 0;
+      transform: translateX(-30px);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: slideInLeft 0.6s ease-out forwards;
     }
-    .credential-item:last-child {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: none;
+    .credential-item:nth-child(2) { animation-delay: 0.1s; }
+    .credential-item:nth-child(3) { animation-delay: 0.2s; }
+    .credential-item:nth-child(4) { animation-delay: 0.3s; }
+    .credential-item:nth-child(5) { animation-delay: 0.4s; }
+    @keyframes slideInLeft {
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .credential-item:hover {
+      transform: scale(1.02);
+      box-shadow: var(--glow);
     }
     .label {
       font-size: 14px;
@@ -135,7 +195,7 @@
     }
     .field-container {
       position: relative;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .field {
       background: rgba(255, 255, 255, 0.02);
@@ -146,14 +206,30 @@
       font-size: 16px;
       color: white;
       width: 100%;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       word-break: break-all;
       cursor: pointer;
       user-select: none;
+      position: relative;
+      overflow: hidden;
+    }
+    .field::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+    .field:hover::before {
+      left: 100%;
     }
     .field:hover {
-      border-color: rgba(110, 231, 183, 0.2);
-      background: rgba(110, 231, 183, 0.03);
+      border-color: var(--accent);
+      background: rgba(110, 231, 183, 0.05);
+      box-shadow: var(--glow);
     }
     .field:active {
       transform: scale(0.98);
@@ -165,7 +241,7 @@
       color: #fbbf24;
     }
     .store-btn {
-      background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+      background: var(--gradient-primary);
       color: white;
       border: none;
       padding: 12px 24px;
@@ -176,26 +252,49 @@
       transition: all 0.3s ease;
       margin-top: 8px;
       width: 100%;
-      box-shadow: 0 4px 16px rgba(110, 231, 183, 0.2);
+      box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .store-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+    .store-btn:active::before {
+      width: 300px;
+      height: 300px;
     }
     .store-btn:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(110, 231, 183, 0.3);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
     }
     .store-btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
     .store-all-btn {
-      background: linear-gradient(135deg, var(--success), var(--warning));
+      background: var(--gradient-secondary);
       margin-top: 16px;
+      box-shadow: 0 4px 16px rgba(245, 87, 108, 0.3);
+    }
+    .store-all-btn:hover:not(:disabled) {
+      box-shadow: 0 8px 24px rgba(245, 87, 108, 0.4);
     }
     .empty-state {
       color: var(--muted);
       font-style: italic;
       font-size: 14px;
       text-align: center;
-      padding: 40px;
+      padding: 60px 20px;
+      animation: fadeInUp 1s ease-out 0.4s both;
     }
     .accounts-panel {
       width: 380px;
@@ -217,7 +316,7 @@
       left: 0;
       right: 0;
       height: 4px;
-      background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+      background: var(--gradient-secondary);
       animation: shimmer 2s infinite linear reverse;
     }
     .panel-title {
@@ -228,6 +327,15 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      animation: fadeInUp 1s ease-out 0.6s both;
+    }
+    .counter {
+      background: var(--card);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--success);
+      font-weight: 600;
     }
     .accounts-list {
       flex: 1;
@@ -253,10 +361,18 @@
       border-radius: 14px;
       margin-bottom: 16px;
       border-left: 4px solid var(--accent);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideInUpItem 0.6s ease-out forwards;
+    }
+    .account-item:nth-child(2) { animation-delay: 0.1s; }
+    .account-item:nth-child(3) { animation-delay: 0.2s; }
+    @keyframes slideInUpItem {
+      to { opacity: 1; transform: translateY(0); }
     }
     .account-item::before {
       content: '';
@@ -272,8 +388,8 @@
     .account-item:hover {
       background: rgba(110, 231, 183, 0.08);
       border-left-color: var(--accent-hover);
-      transform: translateX(4px);
-      box-shadow: 0 4px 16px rgba(110, 231, 183, 0.1);
+      transform: translateX(8px) scale(1.02);
+      box-shadow: var(--glow);
     }
     .account-item:hover::before {
       opacity: 1;
@@ -301,6 +417,7 @@
       font-size: 15px;
       margin-top: 40px;
       padding: 20px;
+      animation: fadeInUp 1s ease-out;
     }
     /* Modal */
     .modal {
@@ -334,11 +451,17 @@
       box-shadow: var(--shadow-lg);
       border: 1px solid var(--border);
       position: relative;
-      animation: slideUp 0.3s ease;
+      animation: modalSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: scale(0.7);
+      opacity: 0;
     }
-    @keyframes slideUp {
-      from { transform: translateY(50px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+    .modal.active .modal-content {
+      transform: scale(1);
+      opacity: 1;
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(50px) scale(0.7); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
     }
     .close-btn {
       position: absolute;
@@ -349,10 +472,18 @@
       font-size: 24px;
       color: var(--muted);
       cursor: pointer;
-      transition: color 0.2s ease;
+      transition: all 0.2s ease;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .close-btn:hover {
       color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+      transform: rotate(90deg);
     }
     .modal-title {
       font-size: 24px;
@@ -376,11 +507,27 @@
       text-align: left;
       cursor: pointer;
       user-select: none;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    .modal-field::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transition: left 0.5s;
+    }
+    .modal-field:hover::before {
+      left: 100%;
     }
     .modal-field:hover {
-      border-color: rgba(110, 231, 183, 0.2);
-      background: rgba(110, 231, 183, 0.03);
+      border-color: var(--accent);
+      background: rgba(110, 231, 183, 0.05);
+      box-shadow: var(--glow);
     }
     .modal-field:active {
       transform: scale(0.98);
@@ -400,23 +547,52 @@
     .toast {
       background: var(--card);
       color: white;
-      padding: 12px 20px;
-      border-radius: 10px;
+      padding: 16px 24px;
+      border-radius: 12px;
       box-shadow: var(--shadow);
       border-left: 4px solid var(--success);
-      transform: translateX(100%);
+      transform: translateX(100%) scale(0.9);
       opacity: 0;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      max-width: 300px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      max-width: 320px;
       font-size: 14px;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .toast.show {
-      transform: translateX(0);
+      transform: translateX(0) scale(1);
       opacity: 1;
     }
     .toast.error {
       border-left-color: var(--danger);
+    }
+    .toast.success::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: bold;
+    }
+    .toast.error::before {
+      content: '⚠';
+      color: var(--danger);
+      font-weight: bold;
+    }
+    /* Clear Button */
+    .clear-btn {
+      background: var(--danger);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: all 0.2s ease;
+    }
+    .clear-btn:hover {
+      background: #dc2626;
+      transform: scale(1.05);
     }
     @media (max-width: 768px) {
       .container {
@@ -443,6 +619,7 @@
       .current-account {
         max-width: none;
       }
+      h1 { font-size: 28px; }
     }
   </style>
 </head>
@@ -450,16 +627,20 @@
   <div class="container">
     <div class="main-panel">
       <h1>RawrGen</h1>
-      <p class="subtitle">RAWRRRRRR</p>
+      <p class="subtitle">Advanced Credential Capture</p>
       <div class="current-account" id="current-account">
-        <div class="empty-state">No accounts</div>
+        <div class="empty-state">No credentials captured yet. RAWRRRRRR!</div>
       </div>
     </div>
     <div class="accounts-panel">
-      <div class="panel-title">Stored Accounts</div>
-      <div class="accounts-list" id="accounts-list">
-        <div class="no-accounts">No accounts stored yet.!</div>
+      <div class="panel-title">
+        Stored Accounts
+        <span class="counter" id="account-counter">0</span>
       </div>
+      <div class="accounts-list" id="accounts-list">
+        <div class="no-accounts">No accounts stored yet. Capture and roar!</div>
+      </div>
+      <button class="clear-btn" onclick="clearAllAccounts()" id="clear-btn" style="display: none;">Clear All</button>
     </div>
   </div>
 
@@ -508,7 +689,7 @@
       }
 
       navigator.clipboard.writeText(text).then(() => {
-        showToast(message);
+        showToast(message, 'success');
       }).catch(() => {
         showToast('Copy failed', 'error');
       });
@@ -532,19 +713,30 @@
         toast.classList.remove('show');
         setTimeout(() => {
           container.removeChild(toast);
-        }, 300);
+        }, 400);
       }, 3000);
+    }
+
+    // Clear all accounts
+    function clearAllAccounts() {
+      if (confirm('Clear all stored accounts? This cannot be undone.')) {
+        saveStoredAccounts([]);
+        renderAccounts();
+        showToast('All accounts cleared!', 'error');
+      }
     }
 
     // Render current accounts
     function renderCurrentAccounts(currents) {
       const container = document.getElementById('current-account');
       if (currents.length === 0) {
-        container.innerHTML = '<div class="empty-state">No credentials captured</div>';
+        container.innerHTML = '<div class="empty-state">No credentials captured yet. RAWRRRRRR!</div>';
         return;
       }
 
-      let html = `<div class="captured-title">accounts (${currents.length})</div>`;
+      let html = `<div class="captured-title">
+        Captured Credentials <span style="color: var(--success); font-weight: 700;">(${currents.length}/30)</span>
+      </div>`;
       currents.forEach((acc, index) => {
         const numLabel = index > 0 ? ` #${index + 1}` : '';
         html += `
@@ -569,9 +761,11 @@
       container.innerHTML = html;
     }
 
-    // Parse current path
+    // Parse current path - handle encoded spaces
     function parseCurrentPath() {
-      const path = decodeURIComponent(window.location.pathname.slice(1)).trim();
+      let path = decodeURIComponent(window.location.pathname.slice(1)).trim();
+      // Handle %20 after decoding (from %2520 etc.)
+      path = path.replace(/%20/g, ' ');
       if (!path) {
         renderCurrentAccounts([]);
         return [];
@@ -612,13 +806,13 @@
 
       const btn = event.target;
       const originalText = btn.textContent;
-      btn.textContent = 'Stored!';
-      btn.disabled = true;
+      btn.textContent = 'Stored! 🦖';
+      btn.style.background = 'var(--success)';
       setTimeout(() => {
         btn.textContent = originalText;
-        btn.disabled = false;
+        btn.style.background = '';
       }, 2000);
-      showToast('Account stored successfully!');
+      showToast('Account stored successfully!', 'success');
     }
 
     // Store all current accounts
@@ -646,7 +840,7 @@
       if (skippedCount > 0) {
         message += `, ${skippedCount} skipped (duplicates)`;
       }
-      showToast(message);
+      showToast(message, 'success');
 
       // Disable store all button temporarily
       const btn = event.target;
@@ -658,11 +852,18 @@
     function renderAccounts() {
       const accounts = getStoredAccounts();
       const listEl = document.getElementById('accounts-list');
+      const counterEl = document.getElementById('account-counter');
+      const clearBtn = document.getElementById('clear-btn');
+      
+      counterEl.textContent = accounts.length;
       
       if (accounts.length === 0) {
-        listEl.innerHTML = '<div class="no-accounts">No accounts stored yet. Capture and store one above!</div>';
+        listEl.innerHTML = '<div class="no-accounts">No accounts stored yet. Capture and roar!</div>';
+        clearBtn.style.display = 'none';
         return;
       }
+
+      clearBtn.style.display = 'block';
 
       listEl.innerHTML = accounts.map((acc, index) => `
         <div class="account-item" onclick="openModal(${index})">
