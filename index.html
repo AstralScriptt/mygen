@@ -170,9 +170,6 @@
       transform: translateX(-30px);
       transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
       animation: slideInLeft 0.6s ease-out forwards;
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
     }
     .credential-item:nth-child(2) { animation-delay: 0.1s; }
     .credential-item:nth-child(3) { animation-delay: 0.2s; }
@@ -184,49 +181,6 @@
     .credential-item:hover {
       transform: scale(1.02);
       box-shadow: var(--glow);
-    }
-    .avatar-container {
-      flex-shrink: 0;
-      position: relative;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: var(--card);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .avatar-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      transition: all 0.3s ease;
-    }
-    .avatar-img.loading::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 20px;
-      height: 20px;
-      margin: -10px 0 0 -10px;
-      border: 2px solid var(--accent);
-      border-top: 2px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .avatar-img.error {
-      background: var(--card);
-      border: 2px solid var(--muted);
-    }
-    .credential-content {
-      flex: 1;
     }
     .label {
       font-size: 14px;
@@ -414,9 +368,6 @@
       opacity: 0;
       transform: translateY(20px);
       animation: slideInUpItem 0.6s ease-out forwards;
-      display: flex;
-      align-items: center;
-      gap: 12px;
     }
     .account-item:nth-child(2) { animation-delay: 0.1s; }
     .account-item:nth-child(3) { animation-delay: 0.2s; }
@@ -443,23 +394,14 @@
     .account-item:hover::before {
       opacity: 1;
     }
-    .account-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-    .account-avatar.error {
-      background: var(--card);
-      border: 2px solid var(--muted);
-    }
     .account-username {
       font-weight: 600;
       color: var(--accent);
       font-size: 15px;
       margin-bottom: 6px;
-      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .account-password {
       color: #fbbf24;
@@ -549,26 +491,8 @@
       margin-bottom: 24px;
       font-weight: 600;
     }
-    .modal-header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .modal-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-    .modal-avatar.error {
-      background: var(--card);
-      border: 2px solid var(--muted);
-    }
     .modal-field-container {
       margin-bottom: 24px;
-      text-align: left;
     }
     .modal-field {
       background: rgba(255, 255, 255, 0.02);
@@ -696,15 +620,6 @@
         max-width: none;
       }
       h1 { font-size: 28px; }
-      .credential-item {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .account-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
     }
   </style>
 </head>
@@ -733,12 +648,6 @@
     <div class="modal-content">
       <button class="close-btn" onclick="closeModal()">&times;</button>
       <h2 class="modal-title">Account Details</h2>
-      <div class="modal-header">
-        <img class="modal-avatar" id="modal-avatar" src="" alt="Avatar" onerror="this.classList.add('error'); this.src='https://via.placeholder.com/60?text=?'">
-        <div>
-          <div id="modal-username-full" class="username-modal"></div>
-        </div>
-      </div>
       <div class="modal-field-container">
         <div class="label">Username</div>
         <div class="field-container">
@@ -757,60 +666,6 @@
   <div id="toast-container"></div>
   <script>
     let currentAccounts = [];
-    let avatarCache = new Map(); // Cache for avatar URLs by username
-
-    // Utility to add delay between API calls
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-
-    // Roblox API functions
-    async function getUserId(username) {
-      try {
-        await sleep(100); // Delay to avoid rate limits
-        const response = await fetch(`https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}`);
-        if (!response.ok) {
-          console.error(`User search failed for ${username}: ${response.status} ${response.statusText}`);
-          return null;
-        }
-        const data = await response.json();
-        if (!data.data || data.data.length === 0) {
-          console.warn(`No user found for ${username}`);
-          return null;
-        }
-        return data.data[0].id;
-      } catch (error) {
-        console.error(`Error fetching user ID for ${username}:`, error);
-        return null;
-      }
-    }
-
-    async function getAvatarUrl(username) {
-      if (avatarCache.has(username)) return avatarCache.get(username);
-      const userId = await getUserId(username);
-      if (!userId) {
-        showToast(`Avatar not found for ${username}`, 'error');
-        avatarCache.set(username, 'https://via.placeholder.com/50?text=?'); // Replace with your own placeholder if desired
-        return avatarCache.get(username);
-      }
-      try {
-        await sleep(100); // Delay to avoid rate limits
-        const response = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=false`);
-        if (!response.ok) {
-          console.error(`Avatar fetch failed for userId ${userId}: ${response.status} ${response.statusText}`);
-          showToast(`Failed to load avatar for ${username}`, 'error');
-          throw new Error('API error');
-        }
-        const data = await response.json();
-        const url = data.data && data.data[0] ? data.data[0].imageUrl : 'https://via.placeholder.com/50?text=?';
-        avatarCache.set(username, url);
-        return url;
-      } catch (error) {
-        console.error(`Error fetching avatar for ${username}:`, error);
-        showToast(`Failed to load avatar for ${username}`, 'error');
-        avatarCache.set(username, 'https://via.placeholder.com/50?text=?');
-        return avatarCache.get(username);
-      }
-    }
-
     // Helper to get or initialize storage
     function getStoredAccounts() {
       return JSON.parse(localStorage.getItem('rawrgenAccounts') || '[]');
@@ -855,13 +710,12 @@
     function clearAllAccounts() {
       if (confirm('Clear all stored accounts? This cannot be undone.')) {
         saveStoredAccounts([]);
-        avatarCache.clear();
         renderAccounts();
         showToast('All accounts cleared!', 'error');
       }
     }
     // Render current accounts
-    async function renderCurrentAccounts(currents) {
+    function renderCurrentAccounts(currents) {
       const container = document.getElementById('current-account');
       if (currents.length === 0) {
         container.innerHTML = '<div class="empty-state">No credentials captured yet. RAWRRRRRR!</div>';
@@ -870,43 +724,31 @@
       let html = `<div class="captured-title">
         Captured Credentials <span style="color: var(--success); font-weight: 700;">(${currents.length}/30)</span>
       </div>`;
-      for (let [index, acc] of currents.entries()) {
+      currents.forEach((acc, index) => {
         const numLabel = index > 0 ? ` #${index + 1}` : '';
-        const avatarUrl = await getAvatarUrl(acc.username); // Fetch avatar
         html += `
           <div class="credential-item">
-            <div class="avatar-container">
-              <img src="${avatarUrl}" class="avatar-img loading" alt="Avatar" id="current-avatar-${index}" onerror="this.classList.remove('loading'); this.classList.add('error'); this.src='https://via.placeholder.com/50?text=?'">
+            <div class="label">Username${numLabel}</div>
+            <div class="field-container">
+              <div class="field username-field" id="current-username-${index}" onclick="copyField('current-username-${index}', 'Username copied')">${acc.username}</div>
             </div>
-            <div class="credential-content">
-              <div class="label">Username${numLabel}</div>
-              <div class="field-container">
-                <div class="field username-field" id="current-username-${index}" onclick="copyField('current-username-${index}', 'Username copied')">${acc.username}</div>
-              </div>
-              <div class="label">Password${numLabel}</div>
-              <div class="field-container">
-                <div class="field password-field" id="current-password-${index}" onclick="copyField('current-password-${index}', 'Password copied')">${acc.password}</div>
-              </div>
-              <button class="store-btn" onclick="storeCurrent(${index})">Store This Account</button>
+            <div class="label">Password${numLabel}</div>
+            <div class="field-container">
+              <div class="field password-field" id="current-password-${index}" onclick="copyField('current-password-${index}', 'Password copied')">${acc.password}</div>
             </div>
+            <button class="store-btn" onclick="storeCurrent(${index})">Store This Account</button>
           </div>
         `;
-      }
+      });
       if (currents.length > 1) {
         html += `<button class="store-btn store-all-btn" onclick="storeAllCurrent()">Store All (${currents.length})</button>`;
       }
       container.innerHTML = html;
-      // Remove loading after render
-      currents.forEach((_, index) => {
-        const img = document.getElementById(`current-avatar-${index}`);
-        if (img) {
-          setTimeout(() => img.classList.remove('loading'), 1000);
-        }
-      });
     }
     // Parse current path - handle encoded spaces
-    async function parseCurrentPath() {
+    function parseCurrentPath() {
       let path = decodeURIComponent(window.location.pathname.slice(1)).trim();
+      // Handle %20 after decoding (from %2520 etc.)
       path = path.replace(/%20/g, ' ');
       if (!path) {
         renderCurrentAccounts([]);
@@ -924,11 +766,11 @@
       }
       currents = currents.slice(0, 30);
       currentAccounts = currents;
-      await renderCurrentAccounts(currents);
+      renderCurrentAccounts(currents);
       return currents;
     }
     // Store specific current account
-    async function storeCurrent(index) {
+    function storeCurrent(index) {
       const acc = currentAccounts[index];
       if (!acc) return;
       let accounts = getStoredAccounts();
@@ -939,7 +781,7 @@
       }
       accounts.unshift(acc);
       saveStoredAccounts(accounts);
-      await renderAccounts();
+      renderAccounts();
       const btn = event.target;
       const originalText = btn.textContent;
       btn.textContent = 'Stored! 🦖';
@@ -951,7 +793,7 @@
       showToast('Account stored successfully!', 'success');
     }
     // Store all current accounts
-    async function storeAllCurrent() {
+    function storeAllCurrent() {
       let accounts = getStoredAccounts();
       let storedCount = 0;
       let skippedCount = 0;
@@ -966,19 +808,20 @@
       }
       if (storedCount > 0) {
         saveStoredAccounts(accounts);
-        await renderAccounts();
+        renderAccounts();
       }
       let message = `${storedCount} account${storedCount !== 1 ? 's' : ''} stored`;
       if (skippedCount > 0) {
         message += `, ${skippedCount} skipped (duplicates)`;
       }
       showToast(message, 'success');
+      // Disable store all button temporarily
       const btn = event.target;
       btn.disabled = true;
       setTimeout(() => { btn.disabled = false; }, 2000);
     }
     // Render accounts list
-    async function renderAccounts() {
+    function renderAccounts() {
       const accounts = getStoredAccounts();
       const listEl = document.getElementById('accounts-list');
       const counterEl = document.getElementById('account-counter');
@@ -992,30 +835,18 @@
         return;
       }
       clearBtn.style.display = 'block';
-      let html = '';
-      for (let [index, acc] of accounts.entries()) {
-        await sleep(100); // Delay to avoid rate limits
-        const avatarUrl = await getAvatarUrl(acc.username);
-        html += `
-          <div class="account-item" onclick="openModal(${index})">
-            <img src="${avatarUrl}" class="account-avatar" alt="Avatar" onerror="this.classList.add('error'); this.src='https://via.placeholder.com/40?text=?'">
-            <div>
-              <div class="account-username">${acc.username}</div>
-              <div class="account-password">${acc.password.substring(0, 20)}${acc.password.length > 20 ? '...' : ''}</div>
-            </div>
-          </div>
-        `;
-      }
-      listEl.innerHTML = html;
+      listEl.innerHTML = accounts.map((acc, index) => `
+        <div class="account-item" onclick="openModal(${index})">
+          <div class="account-username">${acc.username}</div>
+          <div class="account-password">${acc.password.substring(0, 20)}${acc.password.length > 20 ? '...' : ''}</div>
+        </div>
+      `).join('');
     }
     // Modal functions
-    async function openModal(index) {
+    function openModal(index) {
       const accounts = getStoredAccounts();
       const acc = accounts[index];
       if (!acc) return;
-      const avatarUrl = await getAvatarUrl(acc.username);
-      document.getElementById('modal-avatar').src = avatarUrl;
-      document.getElementById('modal-username-full').textContent = acc.username;
       document.getElementById('modal-username').textContent = acc.username;
       document.getElementById('modal-password').textContent = acc.password;
       document.getElementById('account-modal').classList.add('active');
@@ -1036,7 +867,8 @@
       }
     });
     // Initialize
-    parseCurrentPath().then(() => renderAccounts());
+    parseCurrentPath();
+    renderAccounts();
   </script>
 </body>
 </html>
