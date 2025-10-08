@@ -192,7 +192,7 @@
       height: 50px;
       border-radius: 50%;
       overflow: hidden;
-      background: var(--border);
+      background: var(--card);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -222,8 +222,8 @@
       100% { transform: rotate(360deg); }
     }
     .avatar-img.error {
-      background: var(--danger);
-      border: 2px solid var(--danger);
+      background: var(--card);
+      border: 2px solid var(--muted);
     }
     .credential-content {
       flex: 1;
@@ -451,8 +451,8 @@
       flex-shrink: 0;
     }
     .account-avatar.error {
-      background: var(--danger);
-      border: 2px solid var(--danger);
+      background: var(--card);
+      border: 2px solid var(--muted);
     }
     .account-username {
       font-weight: 600;
@@ -563,8 +563,8 @@
       object-fit: cover;
     }
     .modal-avatar.error {
-      background: var(--danger);
-      border: 2px solid var(--danger);
+      background: var(--card);
+      border: 2px solid var(--muted);
     }
     .modal-field-container {
       margin-bottom: 24px;
@@ -734,9 +734,9 @@
       <button class="close-btn" onclick="closeModal()">&times;</button>
       <h2 class="modal-title">Account Details</h2>
       <div class="modal-header">
-        <img class="modal-avatar" id="modal-avatar" src="" alt="Avatar" onerror="this.classList.add('error')">
+        <img class="modal-avatar" id="modal-avatar" src="" alt="Avatar" onerror="this.classList.add('error'); this.src='https://via.placeholder.com/60?text=?'">
         <div>
-          <div id="modal-username-full"></div>
+          <div id="modal-username-full" class="username-modal"></div>
         </div>
       </div>
       <div class="modal-field-container">
@@ -759,15 +759,26 @@
     let currentAccounts = [];
     let avatarCache = new Map(); // Cache for avatar URLs by username
 
+    // Utility to add delay between API calls
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
     // Roblox API functions
     async function getUserId(username) {
       try {
+        await sleep(100); // Delay to avoid rate limits
         const response = await fetch(`https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}`);
-        if (!response.ok) return null;
+        if (!response.ok) {
+          console.error(`User search failed for ${username}: ${response.status} ${response.statusText}`);
+          return null;
+        }
         const data = await response.json();
-        return data.data && data.data.length > 0 ? data.data[0].id : null;
+        if (!data.data || data.data.length === 0) {
+          console.warn(`No user found for ${username}`);
+          return null;
+        }
+        return data.data[0].id;
       } catch (error) {
-        console.error('Error fetching user ID:', error);
+        console.error(`Error fetching user ID for ${username}:`, error);
         return null;
       }
     }
@@ -776,18 +787,25 @@
       if (avatarCache.has(username)) return avatarCache.get(username);
       const userId = await getUserId(username);
       if (!userId) {
-        avatarCache.set(username, 'https://via.placeholder.com/50?text=?');
+        showToast(`Avatar not found for ${username}`, 'error');
+        avatarCache.set(username, 'https://via.placeholder.com/50?text=?'); // Replace with your own placeholder if desired
         return avatarCache.get(username);
       }
       try {
+        await sleep(100); // Delay to avoid rate limits
         const response = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=150x150&format=Png&isCircular=false`);
-        if (!response.ok) throw new Error('API error');
+        if (!response.ok) {
+          console.error(`Avatar fetch failed for userId ${userId}: ${response.status} ${response.statusText}`);
+          showToast(`Failed to load avatar for ${username}`, 'error');
+          throw new Error('API error');
+        }
         const data = await response.json();
         const url = data.data && data.data[0] ? data.data[0].imageUrl : 'https://via.placeholder.com/50?text=?';
         avatarCache.set(username, url);
         return url;
       } catch (error) {
-        console.error('Error fetching avatar:', error);
+        console.error(`Error fetching avatar for ${username}:`, error);
+        showToast(`Failed to load avatar for ${username}`, 'error');
         avatarCache.set(username, 'https://via.placeholder.com/50?text=?');
         return avatarCache.get(username);
       }
@@ -889,7 +907,6 @@
     // Parse current path - handle encoded spaces
     async function parseCurrentPath() {
       let path = decodeURIComponent(window.location.pathname.slice(1)).trim();
-      // Handle %20 after decoding (from %2520 etc.)
       path = path.replace(/%20/g, ' ');
       if (!path) {
         renderCurrentAccounts([]);
@@ -956,7 +973,6 @@
         message += `, ${skippedCount} skipped (duplicates)`;
       }
       showToast(message, 'success');
-      // Disable store all button temporarily
       const btn = event.target;
       btn.disabled = true;
       setTimeout(() => { btn.disabled = false; }, 2000);
@@ -978,6 +994,7 @@
       clearBtn.style.display = 'block';
       let html = '';
       for (let [index, acc] of accounts.entries()) {
+        await sleep(100); // Delay to avoid rate limits
         const avatarUrl = await getAvatarUrl(acc.username);
         html += `
           <div class="account-item" onclick="openModal(${index})">
